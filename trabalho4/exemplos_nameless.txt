@@ -1,0 +1,36 @@
+contexto = "xabc"
+
+--Exemplo com variável
+Var 'x'
+*NLam> removeNames contexto (Var 'x')
+NVar 3
+*NLam> restoreNames contexto (NVar 3)
+Var 'x'
+
+--Exemplo com abstração - variável ligada
+Abs 'x' (Var 'x')
+*NLam> removeNames contexto (Abs 'x' (Var 'x'))
+NAbs (NVar 0)
+*NLam> restoreNames contexto (NAbs (NVar 0))
+Abs 'd' (Var 'd')
+
+--Exemplo com abstração - variável livre
+Abs 'x' (Var 'a')
+*NLam> removeNames contexto (Abs 'x' (Var 'a'))
+NAbs (NVar 3)
+*NLam> restoreNames contexto (NAbs (NVar 3))
+Abs 'd' (Var 'a')
+
+--Exemplo de abstração com abstração
+Abs 'x' (Abs 'y' (Var 'y'))
+*NLam> removeNames contexto (Abs 'x' (Abs 'y' (Var 'y')))
+NAbs (NAbs (NVar 0))
+*NLam> restoreNames contexto (NAbs (NAbs (NVar 0)))
+Abs 'd' (Abs 'e' (Var 'e'))
+
+--Exemplo de abstração com aplicação
+App (Abs 'x' (App (Var 'x') (Var 'a'))) (Abs 'y' (Var 'y'))
+*NLam> removeNames contexto (App (Abs 'x' (App (Var 'x') (Var 'a'))) (Abs 'y' (Var 'y')))
+NApp (NAbs (NApp (NVar 0) (NVar 3))) (NAbs (NVar 0))
+*NLam> restoreNames contexto (NApp (NAbs (NApp (NVar 0) (NVar 3))) (NAbs (NVar 0)))
+App (Abs 'd' (App (Var 'd') (Var 'a'))) (Abs 'd' (Var 'd'))

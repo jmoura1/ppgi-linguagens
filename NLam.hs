@@ -1,35 +1,53 @@
 module NLam where
 import Lam
+import LamParser
+import Data.List
+import Data.Maybe
 
--- Tipo de dados para o "Nameless Lambda Calculus"
-data NLam
-   = NVar Int
-   | NAbs NLam
-   | NApp NLam NLam
-   deriving Show
+--Tipo NLam - Termos Lambda Convertido para distância estática
+data NLam = NVar Int
+          | NAbs NLam
+          | NApp NLam NLam deriving Show
 
--- Tipo de dados que representa um contexto de nomes para as funções a seguir.
+--Contexto de nomes
+--type NContext = [(Char, Int)]
 type NContext = [Char]
 
--- Pergunta o índice de um elemento com base na sua posição em uma lista.
-indexof :: Char -> Int -> NContext -> Int
-indexof _ _ [] = -1
-indexof var i g =
-   if var == last g then
-      i
-   else
-      indexof var (i+1) (init g)
+--Contexto padrão
+contexto = "xabc"
 
-getid :: Char -> NContext -> (Int, NContext)
-getid var g =
-   if indexof var 0 g == -1 then
-      (0, g ++ [var])
-   else
-      (indexof var 0 g, g)
+--Candidatos a variável ligada
+letras = "abcdefghijklmnopqrstuvywz"
 
+--Função que retorna uma varável que não está no contexto
+varDisp :: NContext -> [Char] -> Char
+varDisp g c = if not (elem (head c) g) then
+                head c
+              else 
+                varDisp g (tail c)
 
+--Função removeNames (troca as letras to TLam por números)
+removeNames :: NContext -> TLam -> NLam
+removeNames g (Var c) = if elem c g then
+                          NVar (fromJust (elemIndex c (reverse g)))
+                        else
+                          error "Variável fora do contexto"
+removeNames g (Abs x t) = NAbs (removeNames (g ++ [x]) t)
+removeNames g (App t1 t2) = NApp (removeNames g t1) (removeNames g t2)
 
--- Define o tipo de argumentos para removeNames.
--- removeNames :: NContext -> TLam -> NLam
-
--- removeNames g (Var Char):
+--Função restoreNames (troca os números por nomes) - Ainda não está pronto
+restoreNames :: NContext -> NLam -> TLam 
+restoreNames g (NVar n) = if (length g) > (n) then
+                            Var ((reverse g)!!n)
+                          else
+                            error "Variável fora do contexto"
+restoreNames g (NAbs (NVar n)) = if ((length g)+1) > n then
+                                   let cont = g ++ [(varDisp g letras)]
+                                   in 
+                                     Abs ((reverse cont)!!0) (Var ((reverse cont)!!n))
+                                 else
+                                   error "Variável fora do contexto"
+restoreNames g (NAbs t) = let cont = g ++ [(varDisp g letras)]
+                          in 
+                            Abs ((reverse cont)!!0) (restoreNames cont t)
+restoreNames g (NApp t1 t2) = App (restoreNames g t1) (restoreNames g t2) 
