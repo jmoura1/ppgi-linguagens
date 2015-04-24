@@ -16,6 +16,7 @@ Recomentações gerais:
 
 #### Alunos envolvidos:
 - Jessica Moura
+- Daniel Domenico
 - Fernando Campagnolo
 - ~~José~~ Kadico Puiati
 - Alberto Kummer
