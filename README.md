@@ -15,6 +15,10 @@ Recomentações gerais:
    - Proteção contra captura de variáveis através de Distância estática / [Índices de Bruijn](http://en.wikipedia.org/wiki/De_Bruijn_index)
 
 #### Changelog
+- 23/05/2015: *Shifting* e *Beta*-redução de *Nameless Lambda*
+   - shifting: aplicação da técnica de *shifting* em termos lambda "anônimos"
+   - subsNL: substituição de termos *Nameless lambda*
+   - evalNL: implementação de *beta-redução para *Nameless lambda*
 - 17/05/2015: Nameless Lambda Calculus
    - removeNames: Processamento de uma árvore de sintaxe concreta para eliminação dos nomes das variáveis
       - Implementação com índices de Bruijn.
