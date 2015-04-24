@@ -14,6 +14,14 @@ Recomentações gerais:
    - Implementação de um parser através de [Happy](https://www.haskell.org/happy/)
    - Proteção contra captura de variáveis através de Distância estática / [Índices de Bruijn](http://en.wikipedia.org/wiki/De_Bruijn_index)
 
+#### Alunos envolvidos:
+- Jessica Moura
+- Fernando Campagnolo
+- ~~José~~ Kadico Puiati
+- Alberto Kummer
+- Camila Nogueira
+
+
 #### Changelog
 - 23/05/2015: *Shifting* e *Beta*-redução de *Nameless Lambda*
    - shifting: aplicação da técnica de *shifting* em termos lambda "anônimos"
