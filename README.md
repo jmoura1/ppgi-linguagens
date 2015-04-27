@@ -1,6 +1,6 @@
 # ppgi-prog-lang
 
-#### O há nesse por aqui?
+#### O há por aqui?
 Esse repositório armazena códigos desenvolvidos na disciplina [**Linguagens de Programação (ELC921)**](http://www-usr.inf.ufsm.br/~juvizzotto/prog-lang/), ministrada pela Professora [**Juliana Kaizer Vizzotto**](http://www-usr.inf.ufsm.br/~juvizzotto/) no [**Programa de Pós-graduação em Informática**](http://w3.ufsm.br/ppgi/) da [**Universidade Federal de Santa Maria**](http://www.ufsm.br) no primeiro semestre de 2015.
 
 Recomentações gerais:
