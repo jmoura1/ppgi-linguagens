@@ -41,11 +41,6 @@ restoreNames g (NVar n) = if (length g) > (n) then
                             Var ((reverse g)!!n)
                           else
                             error "Variável fora do contexto"
-restoreNames g (NAbs (NVar n)) = if ((length g)+1) > n then
-                                   let cont = g ++ [(varDisp g letras)]
-                                   in Abs ((reverse cont)!!0) (Var ((reverse cont)!!n))
-                                 else
-                                   error "Variável fora do contexto"
 restoreNames g (NAbs t) = let cont = g ++ [(varDisp g letras)]
                           in Abs ((reverse cont)!!0) (restoreNames cont t)
 restoreNames g (NApp t1 t2) = App (restoreNames g t1) (restoreNames g t2) 
@@ -69,10 +64,25 @@ subsNL (j, s) (NVar k) = if k == j then
 subsNL (j, s) (NAbs t) = NAbs (subsNL ((j+1), (shifting (1, 0) s)) t)
 subsNL (j, s) (NApp t1 t2) = NApp (subsNL (j, s) t1) (subsNL (j, s) t2)
 
+--Função que retorna se uma expressão é um valor
+--Valor: uma variável ou uma abstração
+isValNL :: NLam -> Bool
+isValNL (NVar k) = True
+isValNL (NAbs t) = True
+isValNL t12 = False -- Caso não for uma variável ou abstração, retorna false
 
---Função de avaliação
-evalNL :: NLam -> NLam
-evalNL (NVar k) = NVar k
-evalNL (NAbs t) = NAbs t
-evalNL (NApp (NVar k) t2) = (NApp (NVar k) t2)
-evalNL (NApp (NAbs t) v2) = shifting (-1, 0) (subsNL (0, (shifting (1, 0) v2)) (t)) 
+--Função de avaliação - Call By Value
+evalCBVNL :: NLam -> NLam
+evalCBVNL (NVar k) = NVar k
+evalCBVNL (NAbs t) = NAbs t
+evalCBVNL (NApp (NAbs t) v2) = if isValNL v2 then
+                                 shifting (-1, 0) (subsNL (0, (shifting (1, 0) v2)) (t)) --EAPPABS
+                               else --Caso o v2 não seja um valor, então ele é uma Aplicação
+                                 let t2 = evalCBVNL v2  
+                                 in NApp (NAbs t) t2  
+evalCBVNL (NApp t1 t2) = if (not (isValNL t1)) then 
+                           let t1' = evalCBVNL t1 --EAPP1
+                           in (NApp t1' t2)           
+                         else                      
+                           let t2' = (evalCBVNL t2) --EAPP2 (Igual ao else da EAPPABS)
+                           in (NApp t1 t2')
