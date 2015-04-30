@@ -4,7 +4,14 @@ module Lam where
 --TLam significa Termos Lambda - aqui está se definindo uma árvore de sintaxe abstrata
 data TLam = Var Char 
           | Abs Char TLam
-          | App TLam TLam deriving (Show) 
+          | App TLam TLam 
+          | TTrue
+          | TFalse
+          | TIf TLam TLam TLam
+          | TZero
+          | TSucc TLam
+          | TPred TLam
+          | TIsZero TLam deriving (Show)
 
 --Função que indica as variáveis livres de uma sintaxe abstrata Lambda
 freeVariables :: TLam -> [Char]
