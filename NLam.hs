@@ -14,7 +14,7 @@ data NLam = NVar Int
           | NZero
           | NSucc NLam
           | NPred NLam
-          | NIsZero NLam deriving Show
+          | NIsZero NLam deriving (Show, Eq)
 
 --Contexto de nomes
 --type NContext = [(Char, Int)]
@@ -85,10 +85,25 @@ isValNL (NVar k) = True
 isValNL (NAbs t) = True
 isValNL t12 = False -- Caso não for uma variável ou abstração, retorna false
 
+--Função que verificar se um NLam é um tipo True ou False
+isBool :: NLam -> Bool
+isBool NTrue  = True
+isBool NFalse = True
+isBool t12 = False
+ 
+--Função que chama a função de avaliação recursivamente
+interpret :: NLam -> NLam
+interpret t = let t' = evalCBVNL t
+              in if t' == t then t'
+                 else interpret t'    
+
 --Função de avaliação - Call By Value
 evalCBVNL :: NLam -> NLam
 evalCBVNL (NVar k) = NVar k
 evalCBVNL (NAbs t) = NAbs t
+evalCBVNL NTrue = NTrue
+evalCBVNL NFalse = NFalse
+evalCBVNL NZero = NZero
 evalCBVNL (NApp (NAbs t) v2) = if isValNL v2 then
                                  shifting (-1, 0) (subsNL (0, (shifting (1, 0) v2)) (t)) --EAPPABS
                                else --Caso o v2 não seja um valor, então ele é uma Aplicação
@@ -100,3 +115,11 @@ evalCBVNL (NApp t1 t2) = if (not (isValNL t1)) then
                          else                      
                            let t2' = (evalCBVNL t2) --EAPP2 (Igual ao else da EAPPABS)
                            in (NApp t1 t2')
+evalCBVNL (NIf t1 t2 t3) = if (isBool t1) then
+                             if t1 == NTrue then 
+                               t2 --E-IFTRUE
+                             else 
+                               t3 --E-IFFALSE 
+                           else --E-IF
+                             let t1' = evalCBVNL t1  
+                             in (NIf t1' t2 t3)                          
