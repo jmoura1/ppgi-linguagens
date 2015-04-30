@@ -7,7 +7,14 @@ import Data.Maybe
 --Tipo NLam - Termos Lambda Convertido para distância estática
 data NLam = NVar Int
           | NAbs NLam
-          | NApp NLam NLam deriving Show
+          | NApp NLam NLam 
+          | NTrue
+          | NFalse
+          | NIf NLam NLam NLam
+          | NZero
+          | NSucc NLam
+          | NPred NLam
+          | NIsZero NLam deriving Show
 
 --Contexto de nomes
 --type NContext = [(Char, Int)]
@@ -34,6 +41,13 @@ removeNames g (Var c) = if elem c g then
                           error "Variável fora do contexto"
 removeNames g (Abs x t) = NAbs (removeNames (g ++ [x]) t)
 removeNames g (App t1 t2) = NApp (removeNames g t1) (removeNames g t2)
+removeNames g TTrue = NTrue
+removeNames g TFalse = NFalse
+removeNames g (TIf t1 t2 t3) = NIf (removeNames g t1) (removeNames g t2) (removeNames g t3)
+removeNames g TZero = NZero
+removeNames g (TSucc t1) = NSucc (removeNames g t1)
+removeNames g (TPred t1) = NPred (removeNames g t1)
+removeNames g (TIsZero t1) = NIsZero (removeNames g t1)
 
 --Função restoreNames (troca os números por nomes) - Ainda não está pronto
 restoreNames :: NContext -> NLam -> TLam 
