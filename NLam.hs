@@ -156,11 +156,16 @@ evalCBVNL (NIf t1 t2 t3) =
       let t1' = evalCBVNL t1
       in (NIf t1' t2 t3)
 
-evalCBVNL (NPred NZero) = NZero
-evalCBVNL (NSucc t1) = NSucc (evalCBVNL t1) 
-evalCBVNL (NPred (NSucc NZero)) = NZero
-evalCBVNL (NPred (NSucc t1)) = if (isNumber t1) then t1 else (NPred (NSucc t1))
-evalCBVNL (NPred t1) = NPred (evalCBVNL t1)
-evalCBVNL (NIsZero NZero) = NTrue
-evalCBVNL (NIsZero (NSucc nv1)) = NFalse
-evalCBVNL (NIsZero t1) = (NIsZero (evalCBVNL t1))
+evalCBVNL (NPred NZero) = NZero -- E-PREDZERO
+
+evalCBVNL (NPred (NSucc t1)) =
+   if (isNumber t1) then
+      t1 --E-PREDSUCC
+   else (NPred (evalCBVNL((NSucc t1)))) --E-PRED
+
+
+evalCBVNL (NSucc t1) = NSucc (evalCBVNL t1)  --E-SUCC
+evalCBVNL (NPred t1) = NPred (evalCBVNL t1) --E-PRED
+evalCBVNL (NIsZero NZero) = NTrue --E-ISZEROT
+evalCBVNL (NIsZero (NSucc nv1)) = NFalse --E-ISZEROSUCC
+evalCBVNL (NIsZero t1) = (NIsZero (evalCBVNL t1)) --E-ISZERO
