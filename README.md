@@ -24,6 +24,10 @@ Recomentações gerais:
 
 
 #### Changelog
+- 30/05/2015: Adicionado Booleans e Naturais no *Untyped Lambda Calculus*
+   - Daniel Domenico: completou a funcionalidade do Eval no *Nameless Lambda*
+   - evalCBVNL: adicionado suporte a Booleans e condições de teste
+   - lexer: adicionado suporte aos tipos booleanos e expressões de teste
 - 23/05/2015: *Shifting* e *Beta*-redução de *Nameless Lambda*
    - shifting: aplicação da técnica de *shifting* em termos lambda "anônimos"
    - subsNL: substituição de termos *Nameless lambda*
