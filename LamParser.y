@@ -20,10 +20,10 @@ import Lam
       if              { TokenIf }
       then            { TokenThen }
       else            { TokenElse }
-      '0'             { TokenZero }
       succ            { TokenSucc }
       pred            { TokenPred }
       iszero          { TokenIsZero } 
+      int             { TokenNum $$ }
 
 --Precedências
 --%left var (Nao funcionou)
@@ -46,11 +46,16 @@ TLamReg : var                                       { Var $1 }
         | false                                     { TFalse }
         | if TLamReg then TLamReg else TLamReg      { TIf $2 $4 $6 }
         
-        | '0'                                       { TZero }
+        | int                                       { num2lam $1 }
+        
         | succ TLamReg                              { TSucc $2 }
+        | succ '(' TLamReg ')'                      { TSucc $3 }
+        
         | pred TLamReg                              { TPred $2 }
+        | pred '(' TLamReg ')'                      { TPred $3 }
+        
         | iszero TLamReg                            { TIsZero $2 } 
-
+        | iszero '(' TLamReg ')'                    { TIsZero $3 } 
 
 --Funções e Tipos Haskell
 {
@@ -73,7 +78,7 @@ data Token = TokenLam
            | TokenIf 
            | TokenThen 
            | TokenElse 
-           | TokenZero 
+           | TokenNum Int
            | TokenSucc 
            | TokenPred 
            | TokenIsZero deriving Show  
@@ -82,7 +87,7 @@ lexer :: String -> [Token]
 lexer [] = []
 lexer (c:cs) 
     | isSpace c = lexer cs
-    | isDigit c = if c == '0' then TokenZero : lexer cs else lexer cs
+    | isDigit c = lexNum (c:cs)
     | isAlpha c = lexAlpha (c:cs)
 lexer ('.':cs) = TokenDot : lexer cs
 lexer ('(':cs) = TokenOpenPar : lexer cs
@@ -100,6 +105,15 @@ lexAlpha cs =
       ("pred"  , rest) -> TokenPred : lexer rest 
       ("iszero", rest) -> TokenIsZero : lexer rest 
       (var     ,rest) -> if (length var == 1) then TokenVar (head var) : lexer rest else lexer rest 
+
+lexNum cs = TokenNum (read num) : lexer rest
+   where (num,rest) = span isDigit cs
+
+num2lam :: Int -> TLam
+num2lam n
+   | n < 0 = error "Eu não posso converter inteiro negativo para TLam!"
+   | n == 0 = TZero
+   | otherwise = (TSucc (num2lam (n-1)))
 
 main = getContents >>= print . calc .lexer
 
