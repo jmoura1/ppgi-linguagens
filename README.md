@@ -24,6 +24,11 @@ Recomentações gerais:
 
 
 #### Changelog
+- 05/05/2015:
+   - Adiciona suporte a *brackets* em algumas expressões do parser
+   - Atualiza isValNL para considearar booleans e [*Church Numerals*](https://en.wikipedia.org/wiki/Church_encoding#Church_numerals)
+   - Atualiza subsNL para tratar os novos termos lambda da forma primitiva
+   - Atualiza a restoreNames para suportar booleans e numerals
 - 01/05/2015: Atualização do parser
    - Adiciona suporte a numeros naturais no parser
    - NLam.hs: adição de comentários para identificar os passos de avaliação
