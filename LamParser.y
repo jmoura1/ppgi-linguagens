@@ -47,10 +47,15 @@ TLamReg : var                                       { Var $1 }
         | if TLamReg then TLamReg else TLamReg      { TIf $2 $4 $6 }
         
         | int                                       { num2lam $1 }
+        
         | succ TLamReg                              { TSucc $2 }
+        | succ '(' TLamReg ')'                      { TSucc $3 }
+        
         | pred TLamReg                              { TPred $2 }
+        | pred '(' TLamReg ')'                      { TPred $3 }
+        
         | iszero TLamReg                            { TIsZero $2 } 
-
+        | iszero '(' TLamReg ')'                    { TIsZero $3 } 
 
 --Funções e Tipos Haskell
 {
