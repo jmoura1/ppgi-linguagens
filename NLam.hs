@@ -68,6 +68,14 @@ restoreNames g (NAbs t) =
 
 restoreNames g (NApp t1 t2) = App (restoreNames g t1) (restoreNames g t2)
 
+restoreNames g NTrue = TTrue
+restoreNames g NFalse = TFalse
+restoreNames g (NIf t1 t2 t3) = TIf (restoreNames g t1) (restoreNames g t2) (restoreNames g t3)
+restoreNames g NZero = TZero
+restoreNames g (NSucc t1) = TSucc (restoreNames g t1)
+restoreNames g (NPred t1) = TPred (restoreNames g t1)
+restoreNames g (NIsZero t1) = TIsZero (restoreNames g t1)
+
 
 
 
@@ -94,6 +102,9 @@ subsNL (j, s) (NVar k) =
 
 subsNL (j, s) (NAbs t) = NAbs (subsNL ((j+1), (shifting (1, 0) s)) t)
 subsNL (j, s) (NApp t1 t2) = NApp (subsNL (j, s) t1) (subsNL (j, s) t2)
+
+subsNL (j,s) t = t
+
 
 --Função que retorna se uma expressão é um valor
 --Valor: um termo em sua forma normal (primitivo)
