@@ -24,6 +24,8 @@ import Lam
       pred            { TokenPred }
       iszero          { TokenIsZero } 
       int             { TokenNum $$ }
+      ':'             { TokenBind }
+      Bool            { TokenBool } 
 
 --Precedências
 --%left var (Nao funcionou)
@@ -34,8 +36,8 @@ import Lam
 TLamReg : var                                       { Var $1 }
         | '(' var ')'                               { Var $2 }
         
-        | lam var '.' TLamReg                       { Abs $2 $4 }    
-        | '(' lam var '.' TLamReg ')'               { Abs $3 $5 }         
+        | lam var ':' Bool '.' TLamReg              { Abs $2 TypeBool $6 }    
+        | '(' lam var ':' Bool '.' TLamReg ')'      { Abs $3 TypeBool $7 }         
         
         | TLamReg TLamReg                           { App $1 $2 } 
         | '(' TLamReg ')' '(' TLamReg ')'           { App $2 $5 }
@@ -81,7 +83,9 @@ data Token = TokenLam
            | TokenNum Int
            | TokenSucc 
            | TokenPred 
-           | TokenIsZero deriving Show  
+           | TokenIsZero
+           | TokenBind
+           | TokenBool deriving Show  
 
 lexer :: String -> [Token]
 lexer [] = []
@@ -92,6 +96,7 @@ lexer (c:cs)
 lexer ('.':cs) = TokenDot : lexer cs
 lexer ('(':cs) = TokenOpenPar : lexer cs
 lexer (')':cs) = TokenClosePar : lexer cs
+lexer (':':cs) = TokenBind : lexer cs
 
 lexAlpha cs =
    case span isAlpha cs of
@@ -104,6 +109,7 @@ lexAlpha cs =
       ("succ"  , rest) -> TokenSucc : lexer rest
       ("pred"  , rest) -> TokenPred : lexer rest 
       ("iszero", rest) -> TokenIsZero : lexer rest 
+      ("Bool"  , rest) -> TokenBool : lexer rest 
       (var     ,rest) -> if (length var == 1) then TokenVar (head var) : lexer rest else lexer rest 
 
 lexNum cs = TokenNum (read num) : lexer rest
