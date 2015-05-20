@@ -14,7 +14,7 @@ isNotError (TypeErr str) = False
 isNotError _             = True
 
 addType :: TContext -> Char -> Type -> TContext
-addType ctx char type1 =  [(char,type1)]++ctx
+addType ctx char type1 = ctx++[(char,type1)]
 
 findType :: Char -> TContext -> Type
 findType x [] = TypeErr "Variavel fora do contexto"
