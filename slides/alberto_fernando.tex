@@ -1,0 +1,123 @@
+\begin{frame}
+   \frametitle{Segurança = Progresso + Preservação (\texttt{8.3})}
+   \begin{itemize}
+      \item Garantia que a avaliação de um programa bem tipado não travará.
+      \item Dois pilares da segurança:
+      \begin{itemize}
+         \item [$\checkmark$] \textbf{Progresso:} termos bem tipados são avaliados completamente (até sua forma normal).
+         \item [$\checkmark$] \textbf{Preservação:} um passo de avaliação de um termo bem tipado resulta em outro termo igualmente bem tipado.
+      \end{itemize}
+      \item No decorrer do Capítulo 8.3, \cite{pierce} mostra exemplos de Progresso e Conservação, onde os termos são classificados em alguma regra de inferência (como \textsc{T-True, T-If} e \textsc{T-Succ}) e é aplicada alguma regra de avaliação a ele (\textsc{E-IfTrue, E-If, E-Succ, }\ldots).
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Formas Canônicas}
+   \footnotesize
+   \begin{lemma}[\textsc{Formas Canônicas} \texttt{I}]
+      Se \texttt{v} é um valor do tipo \texttt{Bool} então v é \texttt{true} ou
+      \texttt{false}.
+      \begin{align*}
+         \text{t} \qquad & ::= & &\\
+         & \text{\texttt{true}} & \text{valor ``verdadeiro''}\\
+         & \text{\texttt{false}} & \text{valor ``falso''}\\
+      \end{align*}
+   \end{lemma}
+   \begin{lemma}[\textsc{Formas Canônicas} \texttt{II}]
+      Se \texttt{v} é um valor do tipo \texttt{Nat} então v é um valor numérico
+      conforme a gramática:
+      \begin{align*}
+         \text{v} \qquad & ::= \ldots & \\
+         & \text{nv} & \text{valor numérico}\\
+         \text{nv} \qquad & ::= & \\
+         & \text{\texttt{0}} & \text{valor ``zero''}\\
+         & \text{\texttt{succ nv}} & \text{sucessor}
+      \end{align*}
+   \end{lemma}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Inversão da Relação de Tipos}
+   \begin{lemma}[Inversão da Relação de Tipos]
+      \begin{enumerate}
+         \item Se \texttt{true : R} então \texttt{R = Bool}. \label{invtipos:true}
+         \item Se \texttt{false : R} então \texttt{R = Bool}. \label{invtipos:false}
+         \item Se \texttt{if t1 then t2 else t3 : R}, então \texttt{t1 : Bool},
+            \texttt{t2 : R}, e \texttt{t3 : R}.
+         \item Se \texttt{0 : R}, então \texttt{R = Nat}. \label{invtipos:zero}
+         \item Se \texttt{succ t1 : R}, então \texttt{R = Nat} e \texttt{t1 : Nat}.
+         \item Se \texttt{pred t1 : R}, então \texttt{R = Nat} e \texttt{t1 : Nat}.
+         \item Se \texttt{iszero t1 : R}, então \texttt{R = Bool} e \texttt{t1 : Nat}.
+      \end{enumerate}
+   \end{lemma}
+   \textbf{Prova: } Imediato a partir das Formas Canônicas.
+\end{frame}
+
+\begin{frame}
+   \frametitle{Teorema: Progresso}
+   \begin{block}{}
+      Suponha \texttt{t} um termo bem tipado. Então ou \texttt{t} é um valor ou ele será avaliado (\texttt{t} $\rightarrow$ \texttt{t'}).
+   \end{block}
+   \begin{itemize}
+      \item Por indução, \textsc{T-True}, \textsc{T-Zero} e \textsc{T-False} são
+         casos diretos: itens \ref{invtipos:true}, \ref{invtipos:zero} e
+         \ref{invtipos:false} do Lema de Relação de Tipos, respectivamente.
+      \item \texttt{T-If}:
+      \begin{itemize}
+         \item [$\checkmark$] se a guarda do \texttt{if} é um valor então ele será
+         \texttt{true} ou \texttt{false} conforme as Formas Canônicas e uma das seguintes regras serão aplicadas: \texttt{E-IfTrue} ou \texttt{E-IfFalse}.
+         \item [$\checkmark$] senão \texttt{t} $\rightarrow$ \texttt{t'} e aplica-se \texttt{T-If} sob a guarda avaliada \texttt{t'}.
+      \end{itemize}
+      \item \texttt{T-Succ}:
+         \begin{itemize}
+            \item se \texttt{t} for um valor então ele é do tipo numérico (\texttt{Nat}) e, segundo as Formas Canônicas, avalia para \texttt{0} ou \texttt{succ nv}
+            \item senão \texttt{t} $\rightarrow$ \texttt{t'} via \textsc{E-Succ}.
+         \end{itemize}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Teorema: Progresso}
+   \begin{block}{}
+      Suponha \texttt{t} um termo bem tipado. Então ou \texttt{t} é um valor ou ele será avaliado (\texttt{t} $\rightarrow$ \texttt{t'}).
+   \end{block}
+   \begin{itemize}
+      \item \texttt{T-Pred}:
+         \begin{itemize}
+            \item [$\checkmark$] se \texttt{t} for um valor então ele é do tipo numérico (\texttt{Nat}) e pode ser avaliado por uma das seguintes regras:
+            \textsc{E-PredZero} ou \textsc{E-PredSucc} e
+            \begin{itemize}
+               \item [] \texttt{pred t : R} então \texttt{R = Nat} e \texttt{T = Nat}
+            \end{itemize}
+            \item [$\checkmark$] senão \texttt{t} $\rightarrow$ \texttt{t'} e \texttt{pred t} $\rightarrow$ \texttt{pred t'}.
+         \end{itemize}
+      \item \texttt{T-IsZero}
+      \begin{itemize}
+         \item [$\checkmark$] Mesmas condições de \textsc{T-Pred} com a ressalva
+         de que as regras aplicáveis a \texttt{t} são \textsc{E-IszeroZero}, \textsc{E-IszeroSucc} e \textsc{E-IsZero}
+      \end{itemize}
+   \end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}
+   \frametitle{Teorema: Preservação}
+   \begin{block}{}
+      Suponha \texttt{t : T} e \texttt{t} $\rightarrow$ \texttt{t'}. Então
+      \texttt{t' : T}.
+   \end{block}
+   \begin{itemize}
+      \item \texttt{T-True, T-False} e \texttt{T-Zero}:
+         \begin{itemize}
+            \item [$\checkmark$] t é um valor e o teorema não se aplica.
+         \end{itemize}
+      \item \texttt{T-If}
+      \begin{itemize}
+         \item [] {\footnotesize \texttt{t = if t1 then t2 else t3  t1 : Bool t2 : T   t3: T}}
+         \item zim \normalsize zum
+      \end{itemize}
+   \end{itemize}
+\end{frame}
+

@@ -1,0 +1,236 @@
+\documentclass[table, usenames, svgnames, dvipsnames]{beamer}
+\usepackage{listings}
+\usepackage{beamerthemeshadow}
+\usepackage[portuguese]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{array}
+\usepackage{proof}
+\usepackage{easylist}
+
+\usepackage{amsmath}
+\usepackage[round]{natbib}
+
+\usetheme{Rochester}
+%\usetheme{Luebeck}
+\usecolortheme{rose}
+
+\setbeamerfont{frametitle}{size=\normalsize}
+\setbeamerfont{title}{size=\normalsize}
+\beamertemplatenavigationsymbolsempty
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{}
+
+\DeclareGraphicsExtensions{.pdf,.jpg,.png} % compilamos apenas com pdflatex
+\graphicspath{{./figuras/}} % caminho onde as figuras estarao disponiveis
+
+
+\setlength{\TPHorizModule}{1mm}
+
+\setlength{\TPVertModule}{1mm}
+\newcommand{\MyLogo}{%
+\begin{textblock}{}(118.5, 2.5)
+	\includegraphics[width=0.7cm]{ime-mod2.png}
+\end{textblock}
+}
+\title[\sc{Texto no rodap\'e}]{Typed Aritmetic Expressions and Typed Lambda Calculus}
+% semitransparente
+\newcommand{\semitransp}[2][35]{\color{fg!#1}#2}
+
+% \definecolor{myred}{rgb}{0.8, 0.3, 0.3}
+\definecolor{myblue}{rgb}{0.2, 0.2, 0.70196}
+
+\usepackage{framed} % utilizado para codigo fonte
+\definecolor{shadecolor}{named}{LightGray} 
+
+% ---------------------------------------------------------------------------- %
+% Título
+% ---------------------------------------------------------------------------- %
+
+
+
+\subtitle{}
+
+
+
+% ---------------------------------------------------------------------------- %
+\begin{document}
+% ---------------------------------------------------------------------------- %
+
+% ---------------------------------------------------------------------------- %
+% Primeira página: slide 0
+% ---------------------------------------------------------------------------- %
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}
+\frametitle{Tipos (Aritmetic Expressions)}
+\begin{itemize}
+   \item Avaliação de termos sem tipos:
+      \begin{itemize}
+         \item [$\checkmark$] Resulta em um valor (\texttt{true}, \texttt{false} ou \texttt{nv} [\texttt{0} ou \texttt{succ nv}]); ou
+         \item [$\checkmark$] Trava em algum estágio onde nenhuma regra de avaliação se aplica (\texttt{pred false}).
+      \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Tipos (Aritmetic Expressions)}
+\begin{itemize}
+   \item Objetivo dos tipos:
+      \begin{itemize}
+         \item [$\checkmark$] Identificar termos com erros que irão ocasionar um travamento antes de avaliá-los;
+         \item [$\checkmark$] Tipos criados: \texttt{Bool} (booleanos) e \texttt{Nat} (naturais);
+         \item [$\checkmark$] De forma estática: \texttt{t : T} (\texttt{t} possui tipo \texttt{T}) - indica que t irá avaliar para um valor de forma correta (sem travamento) dispensando a necessidade de avaliá-lo.
+         \item [$\checkmark$] Análise conservadora: usa apenas a informação estática, não permitindo
+         expressões como \texttt{if true then 0 else false}, mesmo que elas não ocasionem um travamento.
+      \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Relação dos tipos}
+\begin{itemize}
+   \item Conjunto de regras de inferência que atribuem tipos ao termos, onde \texttt{t : T} (o termo \texttt{t} tem tipo \texttt{T}):
+% \begin{itemize}
+% \item New syntatic form
+% \end{itemize}
+% \begin{eqnarray*}
+%     & T ::= \\
+%     && Bool \\
+% \end{eqnarray*}
+\end{itemize}
+\begin{block}{Regras de tipos para booleanos}
+\begin{align*}
+& \texttt{true : Bool} & & (\textsc{T-True})\\
+& \\
+& \texttt{false : Bool} & & (\textsc{T-False})\\
+& \\
+& \mbox{\infer{\texttt{if t$_1$ then t$_2$ else t$_3$ : T}}{\texttt{t$_1$ : Bool} & &  \texttt{t$_2$ : T} &  & \texttt{t$_3$ : T}}} & & \textsc{(T-If)}
+\end{align*}
+\end{block}
+Adaptado de \citep{pierce}.
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Relação dos tipos}
+\begin{block}{Regras de tipos para números}
+\begin{align*}
+& \texttt{0 : Nat} & & \textsc{(T-Zero)}\\
+& \\
+& \mbox{\infer{\texttt{succ t$_1$ : Nat}}{\texttt{t$_1$ : Nat}}  } & & \textsc{(T-Succ)}\\
+& \\
+& \mbox{\infer{\texttt{pred t$_1$ : Nat}}{\texttt{t$_1$ : Nat}}  } & & \textsc{(T-Pred)}\\
+& \\
+& \mbox{\infer{\texttt{iszero t$_1$ : Bool}}{\texttt{t$_1$ : Nat}}  } & & \textsc{(T-IsZero)}\\
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Relação dos tipos}
+\begin{itemize}
+   \item Derivação de tipos:
+      \begin{itemize}
+         \item [$\checkmark$] Árvores de instâncias de tipos.
+         \item [$\checkmark$] Exemplo: \texttt{if iszero 0 then 0 else pred 0}.
+      \end{itemize}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Relação dos tipos}
+   \begin{theorem}[\textsc{Teorema da unicidade dos tipos}]
+      Indica que, se um termo possui um tipo, esse tipo é único e existe apenas uma
+      regra de inferência que deriva a sua construção.
+   \end{theorem}
+\end{frame}
+
+\input{alberto_fernando.tex}
+
+\begin{frame}
+\frametitle{Tipos de Funções}
+\begin{itemize}
+\item Para construir um tipo que combine booleanos com primitivas do cálculo lambda é preciso 
+adicionar uma classificação para os termos cuja avaliação resulta em uma função;
+\item A fim de ter certeza de que a função irá se comportar corretamente quando for chamada, precisamos manter o controle de qual o tipo de argumento que ela espera.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Tipos de Funcoes}
+\begin{itemize}
+\item Para manter esta informação, podemos utilizar um novo tipo:
+\end{itemize}
+\begin{eqnarray*}
+    & T ::= \\
+    && Bool \\
+    && T \to T\\
+\end{eqnarray*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Tipos de Funções}
+\begin{itemize}
+\item Exemplo:
+\end{itemize}
+\begin{eqnarray*}
+    & Bool \to Bool \\
+    & (Bool \to Bool) \to (Bool \to Bool) \\
+\end{eqnarray*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Relação  de Tipos}
+\begin{itemize}
+\item Para saber o tipo de uma abstração como \textcolor{red}{$"\lambda x.t"$}, precisamos calcular o que acontece quando essa abstração é aplicada a algum argumento;
+\item Abordagem utilizada agora: anotar a abstração com o tipo esperado para seus argumentos.
+\item Exemplo: \textcolor{red}{$"\lambda x.t"$} ser'a \textcolor{red}{$"\lambda x:T1 .t2"$}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Relação  de Tipos}
+\begin{itemize}
+\item Termos podem conter abstrações aninhadas. Com isso em mente, utilizaremos $\Gamma \vdash t : T$ onde $\Gamma$ é um conjunto com as variáveis livres de t e seus respectivos tipos. Sendo assim, a regra de tipo para abstrações será:
+\end{itemize}
+ \begin{center}
+{\huge $\frac{\Gamma ,x\ :\ T_1 \vdash t_2\  :\  T_2}{\Gamma\  \vdash\  \lambda x\  :\ T_1 .t_2\  :\  T_1 \to T_2}$}  $\qquad (T-Abs)$
+ \end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Relação  de Tipos}
+\begin{itemize}
+\item A regra para variável é: 
+\end{itemize}
+ \begin{center}
+{\huge $\frac{x:T\ \in\ \Gamma}{\Gamma\ \vdash\ x\ :\ T}$}  $\qquad (T-Var)$
+ \end{center}
+ \begin{itemize}
+\item A regra para aplicação é: 
+\end{itemize}
+ \begin{center}
+{\huge $\frac{\Gamma\  \vdash\ t_1\ :\ T_{11} \to T_{12} \quad \Gamma\ \vdash\ t_2 : T_{11}}{\Gamma\  \vdash\ t_1\ t_2\ :\ T_{12}}$}  $\qquad (T-App)$
+ \end{center}
+\end{frame}
+
+
+% ---------------------------------------------------------------------------- %
+% slide 1 >
+% ---------------------------------------------------------------------------- %
+
+
+% ---------------------------------------------------------------------------- %
+
+
+
+\bibliography{referencias}
+\bibliographystyle{plainnat}
+
+\end{document}
+
