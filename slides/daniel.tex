@@ -1,0 +1,77 @@
+\begin{frame}
+   \frametitle{8.1 Tipos (Expressões Aritméticas Tipadas)}
+   \begin{itemize}
+      \item Avaliação de termos sem tipos:
+         \begin{itemize}
+            \item [$\checkmark$] Resulta em um valor (\texttt{true}, \texttt{false} ou \texttt{nv} [\texttt{0} ou \texttt{succ nv}]).
+            \item [$\checkmark$] Ou trava em algum estágio da avaliação no qual nenhuma regra de avaliação se aplica (\texttt{pred false}).
+         \end{itemize}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{8.1 Tipos (Expressões Aritméticas Tipadas)}
+   \begin{itemize}
+      \item Objetivo dos tipos:
+         \begin{itemize}
+            \item [$\checkmark$] Identificar termos com erros que irão ocasionar um travamento antes de avaliá-los.
+            \item [$\checkmark$] Tipos criados: \texttt{Bool} (booleanos) e \texttt{Nat} (naturais).
+            \item [$\checkmark$] De forma estática: \texttt{t : T} (\texttt{t} possui tipo \texttt{T}) indica que \texttt{t} irá avaliar para um valor de forma correta (sem travamento) dispensando a necessidade de avaliá-lo.
+            \item [$\checkmark$] Análise conservadora: usa apenas a informação estática, não permitindo expressões como \texttt{if true then 0 else false}, mesmo que elas não ocasionem um travamento.
+         \end{itemize}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{8.2 Relação dos tipos}
+   \begin{itemize}
+      \item Conjunto de regras de inferência que atribuem tipos ao termos, onde \texttt{t : T} (o termo \texttt{t} tem tipo \texttt{T}):
+   \end{itemize}
+   \begin{block}{Regras de tipos para booleans}
+      \begin{align*}
+         & \texttt{true : Bool} & & (\textsc{T-True})\\
+         & \\
+         & \texttt{false : Bool} & & (\textsc{T-False})\\
+         & \\
+         & \mbox{\infer{\texttt{if t$_1$ then t$_2$ else t$_3$ : T}}{\texttt{t$_1$ : Bool} & &  \texttt{t$_2$ : T} &  & \texttt{t$_3$ : T}}} & & \textsc{(T-If)}
+      \end{align*}
+   \end{block}
+   Adaptado de \citep{pierce}.
+\end{frame}
+
+\begin{frame}
+   \frametitle{8.2 Relação dos tipos}
+   \begin{block}{Regras de tipos para números}
+      \footnotesize
+      \begin{align*}
+         & \texttt{0 : Nat} & & \textsc{(T-Zero)}\\
+         & \\
+         & \mbox{\infer{\texttt{succ t$_1$ : Nat}}{\texttt{t$_1$ : Nat}}  } & & \textsc{(T-Succ)}\\
+         & \\
+         & \mbox{\infer{\texttt{pred t$_1$ : Nat}}{\texttt{t$_1$ : Nat}}  } & & \textsc{(T-Pred)}\\
+         & \\
+         & \mbox{\infer{\texttt{iszero t$_1$ : Bool}}{\texttt{t$_1$ : Nat}}  } & & \textsc{(T-IsZero)}\\
+      \end{align*}
+   \end{block}
+   \normalsize
+   Adaptado de \citep{pierce}.
+\end{frame}
+
+\begin{frame}
+   \frametitle{8.2 Relação dos tipos}
+   \begin{itemize}
+      \item Derivação de tipos:
+      \begin{itemize}
+         \item [$\checkmark$] Árvores de instâncias de tipos.
+         \item [$\checkmark$] Exemplo: \texttt{if iszero 0 then 0 else pred 0}.
+      \end{itemize}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{8.2 Relação dos tipos}
+   \begin{theorem}[\textsc{Teorema da unicidade dos tipos}]
+      Indica que, se um termo possui um tipo, esse tipo é único e existe apenas uma
+      regra de inferência que deriva a sua construção.
+   \end{theorem}
+\end{frame}
