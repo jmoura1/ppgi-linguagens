@@ -109,15 +109,39 @@
       \texttt{t' : T}.
    \end{block}
    \begin{itemize}
-      \item \texttt{T-True, T-False} e \texttt{T-Zero}:
+      \item \textsc{T-True, T-False} e \textsc{T-Zero}:
          \begin{itemize}
             \item [$\checkmark$] t é um valor e o teorema não se aplica.
          \end{itemize}
-      \item \texttt{T-If}
+      \item \textsc{T-If}
       \begin{itemize}
-         \item [] {\footnotesize \texttt{t = if t1 then t2 else t3  t1 : Bool t2 : T   t3: T}}
-         \item zim \normalsize zum
-      \end{itemize}
+         \item [$\checkmark$] {\footnotesize \texttt{t = if t1 then t2 else t3  t1 : Bool t2 : T   t3: T}}
+	 \item [$\checkmark$] De acordo com as regras de derivação, \textsc{T-If} pode ser avaliado por \textsc{E-IfTrue}, \textsc{E-IfFalse}
+	          ou \textsc{E-If}: 
+	 \begin{itemize}
+	    \item [$\phi$] Subcaso \textsc{E-IfTrue}: \texttt{t$_1$ = true}, \texttt{t' = t$_2$}: de acordo com a regra \texttt{t' = t$_2$},
+	                   então \texttt{t'} é do mesmo tipo que \texttt{t$_2$}. (\textsc{E-IfFalse}, de maneira semelhante) 
+	    \item [$\phi$] Subcaso \textsc{E-If}: \texttt{t$_1$ $\rightarrow$ t$_1$'} \texttt{t' = if t$_1$' then t$_2$ else t$_3$}
+% 	    \begin{itemize}
+	      \item [$\phi$] Por derivação: \texttt{t$_1$ : Bool}
+	      \item [$\phi$] Por indução: \texttt{t$_1$' : Bool}
+	      \item [$\phi$] \texttt{if t$_1$' then $t_2$ else $t_3$: T; t' : T} \textsc{(T-If)}.
+% 	    \end{itemize}  
+	 \end{itemize}
+      \end{itemize} 
    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+   \frametitle{Teorema: Preservação}
+   \begin{itemize}
+      \item Caso \textsc{T-Succ}: \texttt{t = succ t$_1$ T = Nat t$_1$: Nat}
+         \begin{itemize}
+            \item [$\checkmark$] Observando as Formas Canônicas, podemos aplicar a regra \textsc{E-Succ} que deriva \texttt{t} 
+            $\rightarrow$ \texttt{t'}. Então \texttt{t}$_1 \rightarrow$ \texttt{t$_1$'}. Sabendo que \texttt{t$_1$ : Nat}, então 
+            \texttt{t$_1$' : Nat}, obtendo \texttt{succ t$_1$': Nat}, isto é, \texttt{t' : T} \textsc{(T-Succ)}
+         \end{itemize}
+    \end{itemize}  
 \end{frame}
 
