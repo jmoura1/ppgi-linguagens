@@ -68,6 +68,14 @@ restoreNames g (NAbs t) =
 
 restoreNames g (NApp t1 t2) = App (restoreNames g t1) (restoreNames g t2)
 
+restoreNames g NTrue = TTrue
+restoreNames g NFalse = TFalse
+restoreNames g (NIf t1 t2 t3) = TIf (restoreNames g t1) (restoreNames g t2) (restoreNames g t3)
+restoreNames g NZero = TZero
+restoreNames g (NSucc t1) = TSucc (restoreNames g t1)
+restoreNames g (NPred t1) = TPred (restoreNames g t1)
+restoreNames g (NIsZero t1) = TIsZero (restoreNames g t1)
+
 
 
 
@@ -78,10 +86,9 @@ shifting (d, c) (NVar k) =
       NVar (k + d)
    else
       NVar k
-
 shifting (d, c) (NAbs t) = NAbs (shifting (d, c+1) t)
 shifting (d, c) (NApp t1 t2) = NApp (shifting (d, c) t1) (shifting (d, c) t2)
-
+shifting (d, c) t = t
 
 
 --Função substituição
@@ -96,26 +103,29 @@ subsNL (j, s) (NVar k) =
 subsNL (j, s) (NAbs t) = NAbs (subsNL ((j+1), (shifting (1, 0) s)) t)
 subsNL (j, s) (NApp t1 t2) = NApp (subsNL (j, s) t1) (subsNL (j, s) t2)
 
+subsNL (j,s) t = t
+
+
 --Função que retorna se uma expressão é um valor
---Valor: uma variável ou uma abstração
+--Valor: um termo em sua forma normal (primitivo)
 isValNL :: NLam -> Bool
 isValNL (NVar k) = True
 isValNL (NAbs t) = True
-isValNL t12 = False -- Caso não for uma variável ou abstração, retorna false
+isValNL NTrue  = True
+isValNL NFalse = True
+isValNL t = isNumber t 
 
 --Função que verificar se um NLam é um tipo True ou False
-isBool :: NLam -> Bool
-isBool NTrue  = True
-isBool NFalse = True
-isBool t12 = False
+--isBool :: NLam -> Bool
+--isBool NTrue  = True
+--isBool NFalse = True
+--isBool t12 = False
 
 --Função para se valor é um número
 isNumber :: NLam -> Bool
 isNumber NZero = True
 isNumber (NSucc NZero) = True
-isNumber (NPred NZero) = True
 isNumber (NSucc t) = isNumber t
-isNumber (NPred t) = isNumber t
 isNumber _ = False
 
 --Função que chama a função de avaliação recursivamente
@@ -147,25 +157,22 @@ evalCBVNL (NApp t1 t2) =
       in (NApp t1 t2')
 
 evalCBVNL (NIf t1 t2 t3) =
-   if (isBool t1) then
-      if t1 == NTrue then
-         t2 --E-IFTRUE
-      else
-         t3 --E-IFFALSE
+   if t1 == NTrue then
+      t2 --E-IFTRUE
+   else if t1 == NFalse then
+      t3 --E-IFFALSE
    else --E-IF
       let t1' = evalCBVNL t1
       in (NIf t1' t2 t3)
 
 evalCBVNL (NPred NZero) = NZero -- E-PREDZERO
-
 evalCBVNL (NPred (NSucc t1)) =
    if (isNumber t1) then
       t1 --E-PREDSUCC
-   else (NPred (evalCBVNL((NSucc t1)))) --E-PRED
+   else (NPred (NSucc (evalCBVNL t1))) 
 
-
-evalCBVNL (NSucc t1) = NSucc (evalCBVNL t1)  --E-SUCC
 evalCBVNL (NPred t1) = NPred (evalCBVNL t1) --E-PRED
+evalCBVNL (NSucc t1) = NSucc (evalCBVNL t1)  --E-SUCC
 evalCBVNL (NIsZero NZero) = NTrue --E-ISZEROT
 evalCBVNL (NIsZero (NSucc nv1)) = NFalse --E-ISZEROSUCC
 evalCBVNL (NIsZero t1) = (NIsZero (evalCBVNL t1)) --E-ISZERO
