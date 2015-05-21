@@ -1,9 +1,14 @@
 module Lam where
 
+--Tipos
+data Type = TypeBool
+          | TypeFunc Type Type 
+          | TypeErr String deriving (Show,Eq,Ord) 
+
 --data = operador que possibilida o usuário construir tipos novos
 --TLam significa Termos Lambda - aqui está se definindo uma árvore de sintaxe abstrata
 data TLam = Var Char 
-          | Abs Char TLam
+          | Abs Char Type TLam
           | App TLam TLam 
           | TTrue
           | TFalse
@@ -12,6 +17,8 @@ data TLam = Var Char
           | TSucc TLam
           | TPred TLam
           | TIsZero TLam deriving (Show)
+
+{-Em função dos tipos não funciona mais
 
 --Função que indica as variáveis livres de uma sintaxe abstrata Lambda
 freeVariables :: TLam -> [Char]
@@ -58,3 +65,6 @@ evalCBV (App t1 t2) = if (not (isVal t1))
                            in (App t1' t2)           
                       else let t2' = (evalCBV t2) --EAPP2 (essa é igual ao EAPPABS, porém caso o t1 seja um Var (e não um Abs), talvez não funcione
                            in (App t1 t2')
+                           
+                           
+-}                           

@@ -42,7 +42,7 @@ removeNames g (Var c) =
    else
       error "Variável fora do contexto"
 
-removeNames g (Abs x t) = NAbs (removeNames (g ++ [x]) t)
+removeNames g (Abs x _ t) = NAbs (removeNames (g ++ [x]) t)
 removeNames g (App t1 t2) = NApp (removeNames g t1) (removeNames g t2)
 removeNames g TTrue = NTrue
 removeNames g TFalse = NFalse
@@ -64,7 +64,7 @@ restoreNames g (NVar n) =
 
 restoreNames g (NAbs t) =
    let cont = g ++ [(varDisp g letras)]
-   in Abs ((reverse cont)!!0) (restoreNames cont t)
+   in Abs ((reverse cont)!!0) TypeBool (restoreNames cont t) --Ver como recuperar o tipo da abstração
 
 restoreNames g (NApp t1 t2) = App (restoreNames g t1) (restoreNames g t2)
 
@@ -129,10 +129,10 @@ isNumber (NSucc t) = isNumber t
 isNumber _ = False
 
 --Função que chama a função de avaliação recursivamente
-interpret :: NLam -> NLam
-interpret t = let t' = evalCBVNL t
-              in if t' == t then t'
-                 else interpret t'    
+interpretNLam :: NLam -> NLam
+interpretNLam t = let t' = evalCBVNL t
+                  in if t' == t then t'
+                     else interpretNLam t'    
 
 --Função de avaliação - Call By Value
 evalCBVNL :: NLam -> NLam
