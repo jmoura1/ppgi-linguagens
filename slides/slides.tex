@@ -81,8 +81,8 @@
 \begin{itemize}
    \item Objetivo dos tipos:
       \begin{itemize}
-         \item [$\checkmark$] Identificar termos com erros que irão ocasionar um travamento antes de avaliá-los;
-         \item [$\checkmark$] Tipos criados: \texttt{Bool} (booleanos) e \texttt{Nat} (naturais);
+         \item [$\checkmark$] Identificar termos com erros que irão ocasionar um travamento antes de avaliá-los.
+         \item [$\checkmark$] Tipos criados: \texttt{Bool} (booleanos) e \texttt{Nat} (naturais).
          \item [$\checkmark$] De forma estática: \texttt{t : T} (\texttt{t} possui tipo \texttt{T}) - indica que t irá avaliar para um valor de forma correta (sem travamento) dispensando a necessidade de avaliá-lo.
          \item [$\checkmark$] Análise conservadora: usa apenas a informação estática, não permitindo
          expressões como \texttt{if true then 0 else false}, mesmo que elas não ocasionem um travamento.
@@ -119,6 +119,7 @@ Adaptado de \citep{pierce}.
 \begin{frame}
 \frametitle{Relação dos tipos}
 \begin{block}{Regras de tipos para números}
+\footnotesize
 \begin{align*}
 & \texttt{0 : Nat} & & \textsc{(T-Zero)}\\
 & \\
@@ -129,6 +130,8 @@ Adaptado de \citep{pierce}.
 & \mbox{\infer{\texttt{iszero t$_1$ : Bool}}{\texttt{t$_1$ : Nat}}  } & & \textsc{(T-IsZero)}\\
 \end{align*}
 \end{block}
+\normalsize
+Adaptado de \citep{pierce}.
 \end{frame}
 
 \begin{frame}
