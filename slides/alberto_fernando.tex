@@ -1,18 +1,18 @@
 \begin{frame}
-   \frametitle{Segurança = Progresso + Preservação (\texttt{8.3})}
+   \frametitle{8.3 Segurança = Progresso + Preservação}
    \begin{itemize}
-      \item Garantia que a avaliação de um programa bem tipado não travará.
+      \item Garantias que a avaliação de um programa bem tipado não travará.
       \item Dois pilares da segurança:
       \begin{itemize}
          \item [$\checkmark$] \textbf{Progresso:} termos bem tipados são avaliados completamente (até sua forma normal).
-         \item [$\checkmark$] \textbf{Preservação:} um passo de avaliação de um termo bem tipado resulta em outro termo igualmente bem tipado.
+         \item [$\checkmark$] \textbf{Preservação:} um passo de avaliação de um termo bem tipado resulta noutro termo igualmente bem tipado.
       \end{itemize}
       \item No decorrer do Capítulo 8.3, \cite{pierce} mostra exemplos de Progresso e Conservação, onde os termos são classificados em alguma regra de inferência (como \textsc{T-True, T-If} e \textsc{T-Succ}) e é aplicada alguma regra de avaliação a ele (\textsc{E-IfTrue, E-If, E-Succ, }\ldots).
    \end{itemize}
 \end{frame}
 
 \begin{frame}
-   \frametitle{Formas Canônicas}
+   \frametitle{8.3.1 Formas Canônicas}
    \footnotesize
    \begin{lemma}[\textsc{Formas Canônicas} \texttt{I}]
       Se \texttt{v} é um valor do tipo \texttt{Bool} então v é \texttt{true} ou
@@ -37,7 +37,7 @@
 \end{frame}
 
 \begin{frame}
-   \frametitle{Inversão da Relação de Tipos}
+   \frametitle{8.2.1 Inversão da Relação de Tipos}
    \begin{lemma}[Inversão da Relação de Tipos]
       \begin{enumerate}
          \item Se \texttt{true : R} então \texttt{R = Bool}. \label{invtipos:true}
@@ -54,7 +54,7 @@
 \end{frame}
 
 \begin{frame}
-   \frametitle{Teorema: Progresso}
+   \frametitle{8.3.2 Teorema: Progresso}
    \begin{block}{}
       Suponha \texttt{t} um termo bem tipado. Então ou \texttt{t} é um valor ou ele será avaliado (\texttt{t} $\rightarrow$ \texttt{t'}).
    \end{block}
@@ -77,7 +77,7 @@
 \end{frame}
 
 \begin{frame}
-   \frametitle{Teorema: Progresso}
+   \frametitle{8.3.2 Teorema: Progresso}
    \begin{block}{}
       Suponha \texttt{t} um termo bem tipado. Então ou \texttt{t} é um valor ou ele será avaliado (\texttt{t} $\rightarrow$ \texttt{t'}).
    \end{block}
@@ -99,11 +99,8 @@
    \end{itemize}
 \end{frame}
 
-
-
-
 \begin{frame}
-   \frametitle{Teorema: Preservação}
+   \frametitle{8.3.3 Teorema: Preservação}
    \begin{block}{}
       Suponha \texttt{t : T} e \texttt{t} $\rightarrow$ \texttt{t'}. Então
       \texttt{t' : T}.
@@ -132,9 +129,8 @@
    \end{itemize}
 \end{frame}
 
-
 \begin{frame}
-   \frametitle{Teorema: Preservação}
+   \frametitle{8.3.3 Teorema: Preservação}
    \begin{itemize}
       \item Caso \textsc{T-Succ}: \texttt{t = succ t$_1$ T = Nat t$_1$: Nat}
          \begin{itemize}

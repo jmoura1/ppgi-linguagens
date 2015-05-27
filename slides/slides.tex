@@ -1,13 +1,14 @@
 \documentclass[table, usenames, svgnames, dvipsnames]{beamer}
 \usepackage{listings}
 \usepackage{beamerthemeshadow}
-\usepackage[portuguese]{babel}
 \usepackage[latin1]{inputenc}
 \usepackage[absolute,overlay]{textpos}
 \usepackage{array}
+
+% Coisas adicionadas pelo Alberto.
 \usepackage{proof}
 \usepackage{easylist}
-
+% \usepackage[portuguese]{babel}
 \usepackage{amsmath}
 \usepackage[round]{natbib}
 
@@ -23,36 +24,30 @@
 \setbeamertemplate{footline}{}
 
 \DeclareGraphicsExtensions{.pdf,.jpg,.png} % compilamos apenas com pdflatex
-\graphicspath{{./figuras/}} % caminho onde as figuras estarao disponiveis
-
+\graphicspath{{.}{./figuras/}} % caminho onde as figuras estarao disponiveis
 
 \setlength{\TPHorizModule}{1mm}
 
 \setlength{\TPVertModule}{1mm}
 \newcommand{\MyLogo}{%
 \begin{textblock}{}(118.5, 2.5)
-	\includegraphics[width=0.7cm]{figuras/ime-mod2.png}
+   \includegraphics[width=0.7cm]{figuras/ime-mod2.png}
 \end{textblock}
 }
-\title[\sc{Texto no rodap\'e}]{Typed Aritmetic Expressions and Typed Lambda Calculus}
-% semitransparente
-\newcommand{\semitransp}[2][35]{\color{fg!#1}#2}
 
-% \definecolor{myred}{rgb}{0.8, 0.3, 0.3}
-\definecolor{myblue}{rgb}{0.2, 0.2, 0.70196}
+\title{\footnotesize Expressões Aritméticas Tipadas e Cálculo Lambda Simplesmente Tipado}
 
-\usepackage{framed} % utilizado para codigo fonte
-\definecolor{shadecolor}{named}{LightGray} 
+% \usepackage{framed} % utilizado para codigo fonte
+\definecolor{shadecolor}{named}{LightGray}
+
+\usepackage[portuguese]{babel}
 
 % ---------------------------------------------------------------------------- %
 % Título
 % ---------------------------------------------------------------------------- %
 
-
-
 \subtitle{}
-
-
+\date{}
 
 % ---------------------------------------------------------------------------- %
 \begin{document}
@@ -60,432 +55,33 @@
 
 % ---------------------------------------------------------------------------- %
 % Primeira página: slide 0
-% ---------------------------------------------------------------------------- %
+% --------------------------------------------------------------------------- - %
 \begin{frame}
-\titlepage
+   \centering
+   \textsc{Universidade Federal de Santa Maria}\\
+   \textsc{Programa de Pós-Graduação em Informática - PPGI}\\
+   \vspace{15pt}
+   \titlepage
+   \vspace{-60pt}
+   \begin{center}
+      \textsc{Linguagens de Programação -- ELC921}\\
+      \textsc{Profª Drª Juliana Kaiser Vizzotto}\\
+      \hfill\\
+      \textsc{Alunos:} Alberto Kummer, Camila Nogueira, Daniel di Domenico, Fernando Campagnolo, José Puiati
+   \end{center}
 \end{frame}
 
-%início daniel
-\begin{frame}
-\frametitle{Tipos (Aritmetic Expressions)}
-\begin{itemize}
-   \item Avaliação de termos sem tipos:
-      \begin{itemize}
-         \item [$\checkmark$] Resulta em um valor (\texttt{true}, \texttt{false} ou \texttt{nv} [\texttt{0} ou \texttt{succ nv}]); ou
-         \item [$\checkmark$] Trava em algum estágio onde nenhuma regra de avaliação se aplica (\texttt{pred false}).
-      \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Tipos (Aritmetic Expressions)}
-\begin{itemize}
-   \item Objetivo dos tipos:
-      \begin{itemize}
-         \item [$\checkmark$] Identificar termos com erros que irão ocasionar um travamento antes de avaliá-los.
-         \item [$\checkmark$] Tipos criados: \texttt{Bool} (booleanos) e \texttt{Nat} (naturais).
-         \item [$\checkmark$] De forma estática: \texttt{t : T} (\texttt{t} possui tipo \texttt{T}) - indica que t irá avaliar para um valor de forma correta (sem travamento) dispensando a necessidade de avaliá-lo.
-         \item [$\checkmark$] Análise conservadora: usa apenas a informação estática, não permitindo
-         expressões como \texttt{if true then 0 else false}, mesmo que elas não ocasionem um travamento.
-      \end{itemize}
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Relação dos tipos}
-\begin{itemize}
-   \item Conjunto de regras de inferência que atribuem tipos ao termos, onde \texttt{t : T} (o termo \texttt{t} tem tipo \texttt{T}):
-\end{itemize}
-\begin{block}{Regras de tipos para booleans}
-\begin{align*}
-& \texttt{true : Bool} & & (\textsc{T-True})\\
-& \\
-& \texttt{false : Bool} & & (\textsc{T-False})\\
-& \\
-& \mbox{\infer{\texttt{if t$_1$ then t$_2$ else t$_3$ : T}}{\texttt{t$_1$ : Bool} & &  \texttt{t$_2$ : T} &  & \texttt{t$_3$ : T}}} & & \textsc{(T-If)}
-\end{align*}
-\end{block}
-Adaptado de \citep{pierce}.
-\end{frame}
-
-
-
-\begin{frame}
-\frametitle{Relação dos tipos}
-\begin{block}{Regras de tipos para números}
-\footnotesize
-\begin{align*}
-& \texttt{0 : Nat} & & \textsc{(T-Zero)}\\
-& \\
-& \mbox{\infer{\texttt{succ t$_1$ : Nat}}{\texttt{t$_1$ : Nat}}  } & & \textsc{(T-Succ)}\\
-& \\
-& \mbox{\infer{\texttt{pred t$_1$ : Nat}}{\texttt{t$_1$ : Nat}}  } & & \textsc{(T-Pred)}\\
-& \\
-& \mbox{\infer{\texttt{iszero t$_1$ : Bool}}{\texttt{t$_1$ : Nat}}  } & & \textsc{(T-IsZero)}\\
-\end{align*}
-\end{block}
-\normalsize
-Adaptado de \citep{pierce}.
-\end{frame}
-
-\begin{frame}
-\frametitle{Relação dos tipos}
-\begin{itemize}
-   \item Derivação de tipos:
-      \begin{itemize}
-         \item [$\checkmark$] Árvores de instâncias de tipos.
-         \item [$\checkmark$] Exemplo: \texttt{if iszero 0 then 0 else pred 0}.
-      \end{itemize}
-   \end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Relação dos tipos}
-   \begin{theorem}[\textsc{Teorema da unicidade dos tipos}]
-      Indica que, se um termo possui um tipo, esse tipo é único e existe apenas uma
-      regra de inferência que deriva a sua construção.
-   \end{theorem}
-\end{frame}
-%fim daniel
+\input{daniel.tex}
 
 \input{alberto_fernando.tex}
 
-%inicio jessica
-\begin{frame}
-\frametitle{Tipos de Funções}
-\begin{itemize}
-\item Para construir um tipo que combine booleanos com primitivas do cálculo lambda é preciso 
-adicionar uma classificação para os termos cuja avaliação resulta em uma função;
-\item A fim de ter certeza de que a função irá se comportar corretamente quando for chamada, precisamos manter o controle de qual o tipo de argumento que ela espera.
-\end{itemize}
-\end{frame}
+\input{jessica.tex}
 
-\begin{frame}
-\frametitle{Tipos de Funcoes}
-\begin{itemize}
-\item Para manter esta informação, podemos utilizar um novo tipo:
-\end{itemize}
-\begin{eqnarray*}
-    & T ::= \\
-    && Bool \\
-    && T \to T\\
-\end{eqnarray*}
-\end{frame}
+\input{kadico.tex}
 
-\begin{frame}
-\frametitle{Tipos de Funções}
-\begin{itemize}
-\item Exemplo:
-\end{itemize}
-\begin{eqnarray*}
-    & Bool \to Bool \\
-    & (Bool \to Bool) \to (Bool \to Bool) \\
-\end{eqnarray*}
-\end{frame}
-
-\begin{frame}
-\frametitle{Relação  de Tipos}
-\begin{itemize}
-\item Para saber o tipo de uma abstração como \textcolor{red}{$"\lambda x.t"$}, precisamos calcular o que acontece quando essa abstração é aplicada a algum argumento;
-\item Abordagem utilizada agora: anotar a abstração com o tipo esperado para seus argumentos.
-\item Exemplo: \textcolor{red}{$"\lambda x.t"$} será \textcolor{red}{$"\lambda x:T1 .t2"$}
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Relação  de Tipos}
-\begin{itemize}
-\item Termos podem conter abstrações aninhadas. Com isso em mente, utilizaremos $\Gamma \vdash t : T$ onde $\Gamma$ é um conjunto com as variáveis livres de t e seus respectivos tipos. Sendo assim, a regra de tipo para abstrações será:
-\end{itemize}
- \begin{center}
-{\huge $\frac{\Gamma ,x\ :\ T_1 \vdash t_2\  :\  T_2}{\Gamma\  \vdash\  \lambda x\  :\ T_1 .t_2\  :\  T_1 \to T_2}$}  $\qquad (T-Abs)$
- \end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{Relação  de Tipos}
-\begin{itemize}
-\item A regra para variável é: 
-\end{itemize}
- \begin{center}
-{\huge $\frac{x:T\ \in\ \Gamma}{\Gamma\ \vdash\ x\ :\ T}$}  $\qquad (T-Var)$
- \end{center}
- \begin{itemize}
-\item A regra para aplicação é: 
-\end{itemize}
- \begin{center}
-{\huge $\frac{\Gamma\  \vdash\ t_1\ :\ T_{11} \to T_{12} \quad \Gamma\ \vdash\ t_2 : T_{11}}{\Gamma\  \vdash\ t_1\ t_2\ :\ T_{12}}$}  $\qquad (T-App)$
- \end{center}
-\end{frame}
-%fim jessica
-
-%início kadico
-\begin{frame}{9.3.1 - Lemma [Inversion of the typing relation]}
-  \begin{itemize}
-  \item {
-    If $\Gamma \vdash x : R$ , then $x : R \in \Gamma$.
-  }
-  \item {
-    If $\Gamma \vdash \lambda x : T_1 . t_2 : R$ , then $R : T_1 \rightarrow R_2$ for some $R_2$ with $\Gamma, x : T1 \vdash t_2 : R_2$.
-  }
-  \item {
-    If $\Gamma \vdash$ $t_1$ $t_2 : R$ , then there is some type $T_{11}$ for some $R_2$ with $\Gamma, x : T_1 \vdash t_2 : R_2$.
-  }
-  \item {
-    If $\Gamma \vdash true : Bool$ , then $R : Bool$.
-  }
-  \item {
-    If $\Gamma \vdash false : Bool$ , then $R : Bool$.
-  }
-  \item {
-    If $\Gamma \vdash $ if then $ t_2  $ else $ t_3 : R$ , then $\Gamma \vdash t_1 : Bool$ and $t_1$  $t_2 : R$.
-  }
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{9.3.3 - Theorem [Uniqueness of Types]}
-  \begin{itemize}
-  \item {
-    Give a context $\Gamma$ and a Term t, t must have at most one type.
-  }
-  \item {
-    [Proof] If $\Gamma \vdash x : T$ and $\Gamma \vdash x : S$ then S = T by T-Var.
-  }
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{9.3.4 - Lemma [Canonical Forms]}
-  \begin{itemize}
-  \item {
-    If v : Bool, then v is $true \mid false$.
-  }
-  \item {
-    If v : $T_1 \rightarrow T_2$ , then $v = \lambda x : T_1 . t_2$.
-  }
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{9.3.5 - Theorem [Progress]}
-    
-  \begin{itemize}
-  \item {
-	  If $\vdash k : T$ then either k is a value, or $k \rightarrow k'$ to some k'.
-  }
-  \item {
-	  The variable case cannot occur.
-  }
-  \item {
-	  The abstraction occur, since abstractions are values.
-  }
-  \item {
-	  The application is not so simple.
-	  \begin{itemize}
-  		\item {
-	  		Case T-App: $k' = k_1$  $k_2$  $\mid$  $\vdash k_1 : T_{11} \rightarrow T_{12}$ and $k_2 : T_{11}$.
-  		}
-		\item {
-	  		$k_1$ is a term or it can make a step, in the same way $k_2$.
-  		}
-  		\item {
-	  		If $k_1$ can make a step, then applies E-App1.
-  		}
-  		\item {
-	  		If $k_1$ is a value and $k_2$ can make a step, then applies E-App2.
-  		}
-  		\item {
-	  		If booth are value, then the canonical form of $k_1$ is $\lambda x : T_{11} . k_{12}$, and applies E-AppAbs.
-  		}
-  	  \end{itemize}
-  }
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{9.3.6 - Lemma [Permutation]}
-  \begin{itemize}
-  \item {
-  	If $\Gamma \vdash e : T$ and $\Gamma'$ is a permutation of $\Gamma$, then $\Gamma' \vdash e : T$.
-  }
-  \item {
-  	Proof: $\Gamma \vdash e : T$
-  }
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{9.3.7 - Lemma [Weakening]}
-  \begin{itemize}
-  \item {
-     If $\Gamma \vdash e : T$ and $x \not\in dom(\Gamma)$, then $\Gamma, x : S \vdash t : T$.
-  }
-  \item {
-  	Proof: $\Gamma \vdash e : T$
-  }
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{9.3.8 - Lemma [Preservation of Types Under the Substitution][1]}
-  \begin{itemize}
-  \item {
-    If $\Gamma, x : T' \vdash e : T$, and $\Gamma \vdash e' : T'$, then $\Gamma \vdash [x \rightarrow e'] e : T$
-  }
-  \item {
-  	Proof: If $\Gamma, x : T' \vdash e : T$.
- }
-  \item[?] {Case T-Var:} 
-  
-  	\begin{itemize}
-  	\item[?] \textbf{t = z with z : T $\in$ ($\Gamma$, x : S)} 
-  	\item {
-  		If $z = x$, then $[x \rightarrow s] z = s$
- 	 }
- 	 \item {
- 		Otherwise, $[x \rightarrow s] z = z$
-     }
-     \end{itemize}
-  
-  \item[?] {Case T-Abs}
-  	\begin{itemize}
-  	\item[?] \textbf{t = $\lambda$ y : $T_2$ . $t_1$ \\
-					T = $T_2 \rightarrow T_1$ \\   					
-  					$\Gamma$ x : S, y : $T_2 \vdash t_2 : T_1$ 
-  					} 
-  	\item {
-  		$x \not= y$, and $y \not\in FV(s)$.
- 	 }
- 	 \item {
- 		Permutation $\Gamma y : T_2, x : S \vdash t_1 : T_1$
-     }
-     \item {
- 		Weakening $\Gamma, y : T_2 \vdash s : S$
-     }
-     \item {
- 		By induction $\Gamma, y : T_2 \vdash [x \rightarrow s] t_1 : T_1$
-     }
-     \item {
- 		By T-Abs $\Gamma \vdash \lambda y : T_2 . [x \rightarrow s] t_1 : T_2 \rightarrow T_1$
-     }
-     \end{itemize}
-  
-  \end{itemize}
-  \end{frame}
-\begin{frame}{9.3.8 - Lemma [Preservation of Types Under the Substitution][2]}
-  \begin{itemize}
-  \item[?] {Case T-App:} 
-  
-  	\begin{itemize}
-  	\footnotesize
-  		\item {
- 		By induction $\Gamma \vdash [x \rightarrow s] t_1 : T_2 \rightarrow T_1$ \\
- 		and $\Gamma \vdash [x \rightarrow s] t_2 : T_2$
-     }
-     \item {
- 		By T-App $\Gamma \vdash [x \rightarrow s] t_1 [x \rightarrow s] t_2 : T$
-     }
-  	\end{itemize}
-  	
-  \item[?] {Case T-True and T-False}
-  	\begin{itemize}
-  	\item[?] \textbf{t = true \\
-  					 t = false \\
-  					 T = Bool} 
-  	\item {
-  		$ [x \rightarrow s] t = (true \mid false)$, $\Gamma \vdash [x \rightarrow s] t : T$
- 	 }
-     \end{itemize}
-     \item[?] {Case T-If}
-  	   \begin{itemize}
-  	   \item[?] \textbf{t = if $t_1$ the $t_2$ else $t_3$\\
-  					 $\Gamma$ x : S $\vdash t_1$ : Bool \\
-  					 $\Gamma$ x : S $\vdash t_2$ : T \\
-  					 $\Gamma$ x : S $\vdash t_3$ : T} 
-  	   \item {
-  	     By induction we have: \\
-  	     $\Gamma \vdash [x \rightarrow s] t_1$ : Bool \\
-  	     $\Gamma \vdash [x \rightarrow s] t_2$ : T \\
-  	     $\Gamma \vdash [x \rightarrow s] t_2$ : T \\
- 	   }
-     \end{itemize}
-  
-  \end{itemize}
-  \normalsize
-\end{frame}
-
-\begin{frame}{9.3.9 - Theorem [Preservation]}
-  \begin{itemize}
-  \item {
-    If $\Gamma \vdash e : T$ and $e \rightarrow e'$, then $\Gamma e' : T$.
-  }
-  \end{itemize}
-\end{frame}
-%Fim Kadico
-
-%inicio camila
-
-\begin{frame}
-\frametitle{A correspondência Curry-Howard}
-\begin{itemize}
-\item Ligação entre a teoria dos tipos e a lógica.
-\item Série de resultados na fronteira entre a lógica matemática e a teoria da computabilidade de forma a estabelecer uma relação entre a demonstração formal de um sistema lógico e um modelo computacional.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{A correspondência Curry-Howard}
-O símbolo lógico "$\to$" vem com regras de dois gêneros:
-\begin{enumerate}
-\item Uma regra de introdução (T-Abs) que descreve como elementos do tipo podem ser criados.
-\item Uma regra de eliminação (T-App), que descreve como os elementos do tipo podem ser usados.
-\end{enumerate}
-\begin{center}
-{\huge $\frac{\Gamma , x : T_1\ \vdash\ t_2 :T_2}{\Gamma\ \vdash\ \lambda x : T_1 . t_2\ :\ T_1\ \to T_2}$} \newline  \newline  \newline
-{\huge $\frac{\Gamma\ \vdash\ t_1\ :\ T_{11} \to T_{12} \quad  \Gamma\ \vdash\ t_2\ :\ T_{11}}{\Gamma\ \vdash\ t_1\ t_2\ : T_{12}}$}
-\end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{A correspondência Curry-Howard}
-\begin{itemize}
-\item Em Lógicas construtivas a prova de uma proposição  P consiste em evidencias concretas para P. 
-\item Curry e Howard notaram que tais evidencias possuem uma relação forte com a  computação. 
-\item Ex.: A prova de uma proposição P $\supset$ Q pode ser vista como um procedimento mecânico que, dada uma prova de P, pode-se construir uma prova de Q. Da mesma forma uma prova P $\land$ Q consiste em uma prova de P em conjunto com uma prova de Q.
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}
-\frametitle{A correspondência Curry-Howard}
-Esta observação dá origem a seguinte correspondência: 
-\begin{figure}[!htb]
-\centering
-\includegraphics[width=0.65\textwidth]{figuras/tabela.png}
-\caption{Tabela}
-\label{}
-\end{figure}
-\end{frame}
-
-\begin{frame}
-\frametitle{A correspondência Curry-Howard}
-\begin{itemize}
-\item A correspondência Curry-Howard não é  limitada para um sistema de um tipo particular e uma logica específica, pelo contrario pode ser estendido a uma enorme variedade de sistemas de tipos e lógicas.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Correção e Tipagem}
-\begin{itemize}
-\item Anotações de tipo não desempenham qualquer papel na avaliação.
-\item A maioria dos compiladores para linguagens de programação em grande escala, evitam mostrar comentários em tempo de execução: eles são usados durante o typechecking (e durante a geração de código, em compiladores mais sofisticados).
-\item Tipos não aparecem no cálculo lambda simplesmente tipado na sua forma compilada. Os programas são convertidos para uma forma sem tipos antes de serem avaliadas.
-
-\end{itemize}
-\end{frame}
-
-
-%fim camila
-
-
+\input{camila.tex}
 
 \bibliography{referencias}
 \bibliographystyle{plainnat}
 
 \end{document}
-
