@@ -40,14 +40,14 @@
    \frametitle{8.2.1 Inversão da Relação de Tipos}
    \begin{lemma}[Inversão da Relação de Tipos]
       \begin{enumerate}
-         \item Se \texttt{true : R} então \texttt{R = Bool}. \label{invtipos:true}
-         \item Se \texttt{false : R} então \texttt{R = Bool}. \label{invtipos:false}
-         \item Se \texttt{if t1 then t2 else t3 : R}, então \texttt{t1 : Bool},
-            \texttt{t2 : R}, e \texttt{t3 : R}.
-         \item Se \texttt{0 : R}, então \texttt{R = Nat}. \label{invtipos:zero}
-         \item Se \texttt{succ t1 : R}, então \texttt{R = Nat} e \texttt{t1 : Nat}.
-         \item Se \texttt{pred t1 : R}, então \texttt{R = Nat} e \texttt{t1 : Nat}.
-         \item Se \texttt{iszero t1 : R}, então \texttt{R = Bool} e \texttt{t1 : Nat}.
+         \item Se \texttt{\frenchspacing true : R}, então \texttt{R = Bool}. \label{invtipos:true}
+         \item Se \texttt{\frenchspacing false : R}, então \texttt{R = Bool}. \label{invtipos:false}
+         \item Se \texttt{\frenchspacing if t$_1$ then t$_2$ else t$_3$ : R}, então \texttt{\frenchspacing t$_1$ : Bool},
+            \texttt{\frenchspacing t$_2$ : R}, e \texttt{\frenchspacing t$_3$ : R}.
+         \item Se \texttt{\frenchspacing 0 : R}, então \texttt{\frenchspacing R = Nat}. \label{invtipos:zero}
+         \item Se \texttt{\frenchspacing succ t$_1$ : R}, então \texttt{R = Nat} e \texttt{\frenchspacing t$_1$ : Nat}.
+         \item Se \texttt{\frenchspacing pred t$_1$ : R}, então \texttt{R = Nat} e \texttt{\frenchspacing t$_1$ : Nat}.
+         \item Se \texttt{\frenchspacing iszero t$_1$ : R}, então \texttt{R = Bool} e \texttt{\frenchspacing t$_1$ : Nat}.
       \end{enumerate}
    \end{lemma}
    \textbf{Prova: } Imediato a partir das Formas Canônicas.
@@ -59,20 +59,21 @@
       Suponha \texttt{t} um termo bem tipado. Então ou \texttt{t} é um valor ou ele será avaliado (\texttt{t} $\rightarrow$ \texttt{t'}).
    \end{block}
    \begin{itemize}
-      \item Por indução, \textsc{T-True}, \textsc{T-Zero} e \textsc{T-False} são
-         casos diretos: itens \ref{invtipos:true}, \ref{invtipos:zero} e
+      \item Por indução, \textsc{T-True}, \textsc{T-False} e \textsc{T-Zero} são casos diretos: itens \ref{invtipos:true}, \ref{invtipos:zero} e
          \ref{invtipos:false} do Lema de Relação de Tipos, respectivamente.
       \item \texttt{T-If}:
+      \begin{align*}
+         & \texttt{t} = \mbox{\texttt{if t$_1$ then t$_2$ else t$_3$}}\\
+         & \mbox{\frenchspacing \texttt{t$_1$ : Bool \qquad t$_2$ : T \quad t$_3$ : T}}
+      \end{align*}
       \begin{itemize}
-         \item [$\checkmark$] se a guarda do \texttt{if} é um valor então ele será
-         \texttt{true} ou \texttt{false} conforme as Formas Canônicas e uma das seguintes regras serão aplicadas: \texttt{E-IfTrue} ou \texttt{E-IfFalse}.
-         \item [$\checkmark$] senão \texttt{t} $\rightarrow$ \texttt{t'} e aplica-se \texttt{T-If} sob a guarda avaliada \texttt{t'}.
+         \item [$\checkmark$] Se a guarda do \texttt{if} é um valor então ele será
+         \texttt{true} ou \texttt{false} -- conforme as Formas Canônicas -- e uma das seguintes regras serão aplicadas: \texttt{E-IfTrue} ou \texttt{E-IfFalse}.
+         \item [$\checkmark$] Senão \texttt{t} $\rightarrow$ \texttt{t'} e aplica-se \texttt{T-If}:
+         \begin{align*}
+            & \texttt{t} = \mbox{\texttt{if t$_1$' then t$_2$ else t$_3$}}
+         \end{align*}
       \end{itemize}
-      \item \texttt{T-Succ}:
-         \begin{itemize}
-            \item se \texttt{t} for um valor então ele é do tipo numérico (\texttt{Nat}) e, segundo as Formas Canônicas, avalia para \texttt{0} ou \texttt{succ nv}
-            \item senão \texttt{t} $\rightarrow$ \texttt{t'} via \textsc{E-Succ}.
-         \end{itemize}
    \end{itemize}
 \end{frame}
 
@@ -82,16 +83,51 @@
       Suponha \texttt{t} um termo bem tipado. Então ou \texttt{t} é um valor ou ele será avaliado (\texttt{t} $\rightarrow$ \texttt{t'}).
    \end{block}
    \begin{itemize}
+      \item \texttt{T-Succ}:
+      \begin{align*}
+         & \texttt{t} = \mbox{\texttt{succ t$_1$ \qquad t$_1$ : Nat}}
+      \end{align*}
+      \begin{itemize}
+         \item [$\checkmark$] Se \texttt{t$_1$} for um valor, então ele é do tipo numérico (\texttt{Nat}) e, segundo as Formas Canônicas, avalia para \texttt{0} ou \texttt{succ nv}
+         \item [$\checkmark$] Senão \texttt{t} $\rightarrow$ \texttt{t'} e aplica-se \textsc{E-Succ}:
+      \end{itemize}
+   \end{itemize}
+   \begin{align*}
+      & \mbox{t = \texttt{succ t$_1$'}}
+   \end{align*}
+\end{frame}
+
+\begin{frame}
+   \frametitle{8.3.2 Teorema: Progresso}
+   \begin{block}{}
+      Suponha \texttt{t} um termo bem tipado. Então ou \texttt{t} é um valor ou ele será avaliado (\texttt{t} $\rightarrow$ \texttt{t'}).
+   \end{block}
+   \begin{itemize}
       \item \texttt{T-Pred}:
-         \begin{itemize}
-            \item [$\checkmark$] se \texttt{t} for um valor então ele é do tipo numérico (\texttt{Nat}) e pode ser avaliado por uma das seguintes regras:
-            \textsc{E-PredZero} ou \textsc{E-PredSucc} e
-            \begin{itemize}
-               \item [] \texttt{pred t : R} então \texttt{R = Nat} e \texttt{T = Nat}
-            \end{itemize}
-            \item [$\checkmark$] senão \texttt{t} $\rightarrow$ \texttt{t'} e \texttt{pred t} $\rightarrow$ \texttt{pred t'}.
-         \end{itemize}
-      \item \texttt{T-IsZero}
+      \begin{align*}
+         & \texttt{t} = \mbox{\texttt{pred t$_1$ \qquad t$_1$: Nat}}
+      \end{align*}
+      \begin{itemize}
+         \item [$\checkmark$] Se \texttt{t$_1$} for um valor, então ele é do tipo numérico (\texttt{Nat}) e pode ser avaliado por uma das seguintes regras:
+         \textsc{E-PredZero} ou \textsc{E-PredSucc}
+         \item [$\checkmark$] Senão \texttt{t} $\rightarrow$ \texttt{t'} e aplica-se \textsc{E-Pred}
+         \begin{align*}
+            & \mbox{\texttt{pred t$_1$'}}
+         \end{align*}
+      \end{itemize}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{8.3.2 Teorema: Progresso}
+   \begin{block}{}
+      Suponha \texttt{t} um termo bem tipado. Então ou \texttt{t} é um valor ou ele será avaliado (\texttt{t} $\rightarrow$ \texttt{t'}).
+   \end{block}
+   \begin{itemize}
+      \item \texttt{T-IsZero}:
+      \begin{align*}
+         & \texttt{t} = \mbox{\texttt{iszero t$_1$ \qquad t$_1$: Nat}}
+      \end{align*}
       \begin{itemize}
          \item [$\checkmark$] Mesmas condições de \textsc{T-Pred} com a ressalva
          de que as regras aplicáveis a \texttt{t} são \textsc{E-IszeroZero}, \textsc{E-IszeroSucc} e \textsc{E-IsZero}
@@ -100,44 +136,56 @@
 \end{frame}
 
 \begin{frame}
-   \frametitle{8.3.3 Teorema: Preservação}
+  \frametitle{8.3.3 Teorema: Preservação}
    \begin{block}{}
-      Suponha \texttt{t : T} e \texttt{t} $\rightarrow$ \texttt{t'}. Então
-      \texttt{t' : T}.
+      \begin{minipage}{1\textwidth}
+      \begin{center}
+         Suponha \texttt{\frenchspacing t : T} \quad e \quad \texttt{t} $\rightarrow$ \texttt{t'}. Então \texttt{\frenchspacing t' : T}.
+         \end{center}
+      \end{minipage}
    \end{block}
    \begin{itemize}
       \item \textsc{T-True, T-False} e \textsc{T-Zero}:
          \begin{itemize}
-            \item [$\checkmark$] t é um valor e o teorema não se aplica.
+            \item [$\checkmark$] \texttt{t} é um valor e o teorema não se aplica.
          \end{itemize}
-      \item \textsc{T-If}
+      \item \texttt{T-If}:
+      \begin{align*}
+         & \texttt{t} = \mbox{\texttt{if t$_1$ then t$_2$ else t$_3$}}\\
+         & \mbox{\frenchspacing \texttt{t$_1$ : Bool \qquad t$_2$ : T \quad t$_3$ : T}}
+      \end{align*}
       \begin{itemize}
-         \item [$\checkmark$] {\footnotesize \texttt{t = if t1 then t2 else t3  t1 : Bool t2 : T   t3: T}}
-	 \item [$\checkmark$] De acordo com as regras de derivação, \textsc{T-If} pode ser avaliado por \textsc{E-IfTrue}, \textsc{E-IfFalse}
-	          ou \textsc{E-If}: 
-	 \begin{itemize}
-	    \item [$\phi$] Subcaso \textsc{E-IfTrue}: \texttt{t$_1$ = true}, \texttt{t' = t$_2$}: de acordo com a regra \texttt{t' = t$_2$},
-	                   então \texttt{t'} é do mesmo tipo que \texttt{t$_2$}. (\textsc{E-IfFalse}, de maneira semelhante) 
-	    \item [$\phi$] Subcaso \textsc{E-If}: \texttt{t$_1$ $\rightarrow$ t$_1$'} \texttt{t' = if t$_1$' then t$_2$ else t$_3$}
-% 	    \begin{itemize}
-	      \item [$\phi$] Por derivação: \texttt{t$_1$ : Bool}
-	      \item [$\phi$] Por indução: \texttt{t$_1$' : Bool}
-	      \item [$\phi$] \texttt{if t$_1$' then $t_2$ else $t_3$: T; t' : T} \textsc{(T-If)}.
-% 	    \end{itemize}  
-	 \end{itemize}
-      \end{itemize} 
+         \item [$\checkmark$] Caso \texttt{\frenchspacing t$_1$ : Bool}: Aplica-se \textsc{E-IfTrue} ou \textsc{E-IfFalse}.
+         \item [$\checkmark$] Se \texttt{t$_1$} não é um valor, \texttt{t$_1$ $\rightarrow$ t$_1$'} e então aplica-se \textsc{E-If}
+         \begin{align*}
+         & \texttt{t'} = \mbox{\texttt{if t$_1$' then t$_2$ else t$_3$}}\\
+         & \mbox{\frenchspacing \texttt{t$_1$' : Bool \qquad t$_2$ : T \quad t$_3$ : T}}
+      \end{align*}
+      \end{itemize}
    \end{itemize}
 \end{frame}
 
 \begin{frame}
-   \frametitle{8.3.3 Teorema: Preservação}
+  \frametitle{8.3.3 Teorema: Preservação}
+   \begin{block}{}
+      \begin{minipage}{1\textwidth}
+      \begin{center}
+         Suponha \texttt{\frenchspacing t : T} \quad e \quad \texttt{t} $\rightarrow$ \texttt{t'}. Então \texttt{\frenchspacing t' : T}.
+         \end{center}
+      \end{minipage}
+   \end{block}
    \begin{itemize}
-      \item Caso \textsc{T-Succ}: \texttt{t = succ t$_1$ T = Nat t$_1$: Nat}
-         \begin{itemize}
-            \item [$\checkmark$] Observando as Formas Canônicas, podemos aplicar a regra \textsc{E-Succ} que deriva \texttt{t} 
-            $\rightarrow$ \texttt{t'}. Então \texttt{t}$_1 \rightarrow$ \texttt{t$_1$'}. Sabendo que \texttt{t$_1$ : Nat}, então 
-            \texttt{t$_1$' : Nat}, obtendo \texttt{succ t$_1$': Nat}, isto é, \texttt{t' : T} \textsc{(T-Succ)}
-         \end{itemize}
-    \end{itemize}  
+      \item \textsc{T-Succ}:
+      \begin{align*}
+         & \texttt{t} = \mbox{\texttt{\frenchspacing succ t$_1$ \quad T = Nat \quad t$_1$ : Nat}}
+      \end{align*}
+      \begin{itemize}
+         \item [$\checkmark$] Só é possível avaliar via \textsc{E-Succ}:\\
+      \end{itemize}
+   \end{itemize}
+   \begin{center}
+      \begin{minipage}{0pt}
+      \infer[\textsc{(E-Succ)}]{\texttt{succ t$_1$ $\rightarrow$ succ t$_1$1}}{\texttt{t$_1$ $\rightarrow$ t$_1$'}}
+      \end{minipage}
+      \end{center}
 \end{frame}
-
