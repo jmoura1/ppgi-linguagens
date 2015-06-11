@@ -25,7 +25,13 @@ import Lam
       iszero          { TokenIsZero } 
       int             { TokenNum $$ }
       ':'             { TokenBind }
+      ';'             { TokenSeq } 
+      let             { TokenLet }
+      in              { TokenIn }  
+      '='             { TokenEquals } 
       Bool            { TokenBool } 
+      Nat			    { TokenNat }
+      
 
 --Precedências
 --%left var (Nao funcionou)
@@ -37,7 +43,10 @@ TLamReg : var                                       { Var $1 }
         | '(' var ')'                               { Var $2 }
         
         | lam var ':' Bool '.' TLamReg              { Abs $2 TypeBool $6 }    
-        | '(' lam var ':' Bool '.' TLamReg ')'      { Abs $3 TypeBool $7 }         
+        | '(' lam var ':' Bool '.' TLamReg ')'      { Abs $3 TypeBool $7 }
+        
+        | lam var ':' Nat '.' TLamReg               { Abs $2 TypeNat $6 }    
+        | '(' lam var ':' Nat '.' TLamReg ')'       { Abs $3 TypeNat $7 }         
         
         | TLamReg TLamReg                           { App $1 $2 } 
         | '(' TLamReg ')' '(' TLamReg ')'           { App $2 $5 }
@@ -58,6 +67,14 @@ TLamReg : var                                       { Var $1 }
         
         | iszero TLamReg                            { TIsZero $2 } 
         | iszero '(' TLamReg ')'                    { TIsZero $3 } 
+        
+        | TLamReg ';' TLamReg                       { TSeq $1 $3 }
+        | '(' TLamReg ')' ';' '(' TLamReg ')'       { TSeq $2 $6 }
+        
+        | let var '=' TLamReg in TLamReg                 { TLet $2 $4 $6 } 
+        | let var '=' '(' TLamReg ')' in TLamReg         { TLet $2 $5 $8 }
+        | let var '=' TLamReg in '(' TLamReg ')'         { TLet $2 $4 $7 }
+        | let var '=' '(' TLamReg ')' in '(' TLamReg ')' { TLet $2 $5 $9 }  
 
 --Funções e Tipos Haskell
 {
@@ -85,7 +102,12 @@ data Token = TokenLam
            | TokenPred 
            | TokenIsZero
            | TokenBind
-           | TokenBool deriving Show  
+           | TokenSeq
+           | TokenLet 
+           | TokenIn
+           | TokenEquals
+           | TokenBool 
+           | TokenNat deriving Show  
 
 lexer :: String -> [Token]
 lexer [] = []
@@ -97,6 +119,8 @@ lexer ('.':cs) = TokenDot : lexer cs
 lexer ('(':cs) = TokenOpenPar : lexer cs
 lexer (')':cs) = TokenClosePar : lexer cs
 lexer (':':cs) = TokenBind : lexer cs
+lexer (';':cs) = TokenSeq : lexer cs
+lexer ('=':cs) = TokenEquals : lexer cs
 
 lexAlpha cs =
    case span isAlpha cs of
@@ -108,9 +132,12 @@ lexAlpha cs =
       ("else"  , rest) -> TokenElse : lexer rest
       ("succ"  , rest) -> TokenSucc : lexer rest
       ("pred"  , rest) -> TokenPred : lexer rest 
-      ("iszero", rest) -> TokenIsZero : lexer rest 
-      ("Bool"  , rest) -> TokenBool : lexer rest 
-      (var     ,rest) -> if (length var == 1) then TokenVar (head var) : lexer rest else lexer rest 
+      ("iszero", rest) -> TokenIsZero : lexer rest
+      ("let"   , rest) -> TokenLet : lexer rest
+      ("in"    , rest) -> TokenIn : lexer rest 
+      ("Bool"  , rest) -> TokenBool : lexer rest
+      ("Nat"   , rest) -> TokenNat : lexer rest 
+      (var     , rest) -> if (length var == 1) then TokenVar (head var) : lexer rest else lexer rest 
 
 lexNum cs = TokenNum (read num) : lexer rest
    where (num,rest) = span isDigit cs

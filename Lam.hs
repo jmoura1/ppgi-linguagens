@@ -2,7 +2,9 @@ module Lam where
 
 --Tipos
 data Type = TypeBool
-          | TypeFunc Type Type 
+			 | TypeNat
+          | TypeFunc Type Type
+          | TypeUnit
           | TypeErr String deriving (Show,Eq,Ord) 
 
 --data = operador que possibilida o usuário construir tipos novos
@@ -16,7 +18,10 @@ data TLam = Var Char
           | TZero
           | TSucc TLam
           | TPred TLam
-          | TIsZero TLam deriving (Show)
+          | TIsZero TLam 
+          | TUnit 
+          | TSeq TLam TLam
+          | TLet Char TLam TLam deriving (Show)
 
 {-Em função dos tipos não funciona mais
 
