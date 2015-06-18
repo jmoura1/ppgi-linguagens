@@ -14,7 +14,11 @@ data NLam = NVar Int
           | NZero
           | NSucc NLam
           | NPred NLam
-          | NIsZero NLam deriving (Show, Eq)
+          | NIsZero NLam 
+          | NUnit 
+          | NSeq NLam NLam
+          | NLet Int NLam NLam
+          deriving (Show, Eq)
 
 --Contexto de nomes
 --type NContext = [(Char, Int)]
@@ -51,8 +55,15 @@ removeNames g TZero = NZero
 removeNames g (TSucc t1) = NSucc (removeNames g t1)
 removeNames g (TPred t1) = NPred (removeNames g t1)
 removeNames g (TIsZero t1) = NIsZero (removeNames g t1)
-
-
+removeNames g TUnit = NUnit
+removeNames g (TSeq t1 t2) = let t1' = removeNames g t1
+                                 t2' = removeNames g t2
+                             in NSeq t1' t2' 
+--Ver se está com erro
+removeNames g (TLet c t1 t2) = let ctx = (g ++ [c])
+                                   t1' = removeNames ctx t1
+                                   t2' = removeNames ctx t2
+                               in NLet 0 t1' t2'    
 
 --Função restoreNames (troca os números por nomes)
 restoreNames :: NContext -> NLam -> TLam 
@@ -75,10 +86,14 @@ restoreNames g NZero = TZero
 restoreNames g (NSucc t1) = TSucc (restoreNames g t1)
 restoreNames g (NPred t1) = TPred (restoreNames g t1)
 restoreNames g (NIsZero t1) = TIsZero (restoreNames g t1)
-
-
-
-
+restoreNames g NUnit = TUnit
+restoreNames g (NSeq t1 t2) = TSeq (restoreNames g t1) (restoreNames g t2)
+restoreNames g (NLet c t1 t2) = let letra = varDisp g letras
+                                    ctx = (g ++ [letra]) 
+                                    t1' = restoreNames ctx t1 
+                                    t2' = restoreNames ctx t2
+                                in TLet letra t1' t2'   
+                                
 --Função shifting
 shifting :: (Int, Int) -> NLam -> NLam
 shifting (d, c) (NVar k) =
@@ -93,17 +108,19 @@ shifting (d, c) t = t
 
 --Função substituição
 --         j     s       k
+--j = Índice a ser substituído
+--s = Termo que substitui o índice (j)
+--k = Termo onde será aplicada a substituição
 subsNL :: (Int, NLam) -> NLam -> NLam
 subsNL (j, s) (NVar k) =
    if k == j then
       s
    else
-      NVar k
+		   NVar k
 
 subsNL (j, s) (NAbs t) = NAbs (subsNL ((j+1), (shifting (1, 0) s)) t)
 subsNL (j, s) (NApp t1 t2) = NApp (subsNL (j, s) t1) (subsNL (j, s) t2)
-
-subsNL (j,s) t = t
+subsNL (j, s) t = t
 
 
 --Função que retorna se uma expressão é um valor
@@ -141,6 +158,7 @@ evalCBVNL (NAbs t) = NAbs t
 evalCBVNL NTrue = NTrue
 evalCBVNL NFalse = NFalse
 evalCBVNL NZero = NZero
+evalCBVNL NUnit = NUnit
 evalCBVNL (NApp (NAbs t) v2) =
    if isValNL v2 then
       shifting (-1, 0) (subsNL (0, (shifting (1, 0) v2)) (t)) --EAPPABS
@@ -176,3 +194,14 @@ evalCBVNL (NSucc t1) = NSucc (evalCBVNL t1)  --E-SUCC
 evalCBVNL (NIsZero NZero) = NTrue --E-ISZEROT
 evalCBVNL (NIsZero (NSucc nv1)) = NFalse --E-ISZEROSUCC
 evalCBVNL (NIsZero t1) = (NIsZero (evalCBVNL t1)) --E-ISZERO
+
+evalCBVNL (NSeq t1 t2) = let t1' = evalCBVNL t1
+                         in if t1' == NUnit then
+                           evalCBVNL t2 --E-SEQNEXT
+                         else
+                           (NSeq t1' t2) --E-SEQ 
+                           
+evalCBVNL (NLet n t1 t2) = if isValNL t1 then
+                             subsNL (n, t1) t2
+                           else
+                             NLet n (evalCBVNL(t1)) t2

@@ -1,0 +1,63 @@
+%inicio camila
+
+\begin{frame}
+\frametitle{A correspondência Curry-Howard}
+\begin{itemize}
+\item Ligação entre a teoria dos tipos e a lógica.
+\item Série de resultados na fronteira entre a lógica matemática e a teoria da computabilidade de forma a estabelecer uma relação entre a demonstração formal de um sistema lógico e um modelo computacional.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{A correspondência Curry-Howard}
+O símbolo lógico "$\to$" vem com regras de dois gêneros:
+\begin{enumerate}
+\item Uma regra de introdução (T-Abs) que descreve como elementos do tipo podem ser criados.
+\item Uma regra de eliminação (T-App), que descreve como os elementos do tipo podem ser usados.
+\end{enumerate}
+\begin{center}
+{\huge $\frac{\Gamma , x : T_1\ \vdash\ t_2 :T_2}{\Gamma\ \vdash\ \lambda x : T_1 . t_2\ :\ T_1\ \to T_2}$} \newline  \newline  \newline
+{\huge $\frac{\Gamma\ \vdash\ t_1\ :\ T_{11} \to T_{12} \quad  \Gamma\ \vdash\ t_2\ :\ T_{11}}{\Gamma\ \vdash\ t_1\ t_2\ : T_{12}}$}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{A correspondência Curry-Howard}
+\begin{itemize}
+\item Em Lógicas construtivas a prova de uma proposição  P consiste em evidencias concretas para P.
+\item Curry e Howard notaram que tais evidencias possuem uma relação forte com a  computação.
+\item Ex.: A prova de uma proposição P $\supset$ Q pode ser vista como um procedimento mecânico que, dada uma prova de P, pode-se construir uma prova de Q. Da mesma forma uma prova P $\land$ Q consiste em uma prova de P em conjunto com uma prova de Q.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{A correspondência Curry-Howard}
+Esta observação dá origem a seguinte correspondência:
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=0.65\textwidth]{figuras/tabela.png}
+\caption{Tabela}
+\label{}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{A correspondência Curry-Howard}
+\begin{itemize}
+\item A correspondência Curry-Howard não é  limitada para um sistema de um tipo particular e uma logica específica, pelo contrario pode ser estendido a uma enorme variedade de sistemas de tipos e lógicas.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Correção e Tipagem}
+\begin{itemize}
+\item Anotações de tipo não desempenham qualquer papel na avaliação.
+\item A maioria dos compiladores para linguagens de programação em grande escala, evitam mostrar comentários em tempo de execução: eles são usados durante o typechecking (e durante a geração de código, em compiladores mais sofisticados).
+\item Tipos não aparecem no cálculo lambda simplesmente tipado na sua forma compilada. Os programas são convertidos para uma forma sem tipos antes de serem avaliadas.
+
+\end{itemize}
+\end{frame}
+
+
+%fim camila

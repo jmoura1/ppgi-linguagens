@@ -2,6 +2,7 @@ module LamType where
 import Data.Char
 import Lam
 import NLam
+import LamParser
 
 --Definição de um tipo para o contexto usado no type checker
 type TContext = [(Char,Type)]
@@ -37,12 +38,34 @@ validaArgumento (TypeFunc tyT1 tyT1') tyT2 = if (tyT1 == tyT2)
 typeOf :: TContext -> TLam -> Type
 typeOf ctx TTrue = TypeBool
 typeOf ctx TFalse = TypeBool
+typeOf ctx TZero = TypeNat
+typeOf ctx TUnit = TypeUnit
 typeOf ctx (TIf t1 t2 t3) = if ((typeOf ctx t1) == TypeBool) 
                                then let tyT2 = typeOf ctx t2
                                         tyT3 = typeOf ctx t3
                                   in if (isNotError tyT2) && (isNotError tyT3) && (tyT2 == tyT3) then tyT2
                                      else TypeErr "Os possíveis retornos possuem tipos diferentes"
-                            else TypeErr "A guarda não é do tipo TypeBool"
+                            else TypeErr "A guarda nao eh do tipo TypeBool"
+typeOf ctx (TSucc t1) = if ((typeOf ctx t1) == TypeNat)
+                           then TypeNat
+                        else TypeErr "O argumento de TSucc nao eh do tipo TypeNat"                                   
+typeOf ctx (TPred t1) = if ((typeOf ctx t1) == TypeNat)
+                           then TypeNat
+                        else TypeErr "O argumento de TPred nao eh do tipo TypeNat"                                  
+typeOf ctx (TIsZero t1) = if ((typeOf ctx t1) == TypeNat)
+                           then TypeBool
+                        else TypeErr "O argumento de TIsZero nao eh do tipo TypeNat"                                   
+typeOf ctx (TSeq t1 t2) = let tyT1 = typeOf ctx t1
+                              tyT2 = typeOf ctx t2
+                          in
+                             if (tyT1 == TypeUnit)
+                                then tyT2
+                             else
+                                TypeErr "O primeiro argumento nao eh do tipo Unit"
+typeOf ctx (TLet x t1 t2) = let tyT1 = typeOf ctx t1
+                                ctx' = addType ctx x tyT1
+                                tyT2  = typeOf ctx' t2
+                            in tyT2 
 typeOf ctx (Var char) = findType char ctx    
 typeOf ctx (Abs char tyT1 t2) = let ctx' = addType ctx char tyT1 
                                     tyT2 = typeOf ctx' t2 
@@ -56,7 +79,7 @@ typeOf ctx (App t1 t2) = let tyT1 = typeOf ctx t1
                                        then if (isNotError tyT2)
                                                then validaArgumento tyT1 tyT2                               
                                             else tyT2 --Retorna o erro
-                                    else TypeErr "O primeiro termo da aplicacao não é uma funcao/abstracao"          
+                                    else TypeErr "O primeiro termo da aplicacao nao eh uma funcao/abstracao"          
                             else tyT1 --Retorna o erro
         
 --Função que verifica se um termo possui um tipo diferente de erro                            
