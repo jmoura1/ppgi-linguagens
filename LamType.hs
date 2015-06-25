@@ -25,7 +25,11 @@ findType x (head:tail) = if x == fst (head)
                          
 isFun :: Type -> Bool
 isFun (TypeFunc a b) = True
-isFun _             = False 
+isFun _              = False 
+
+isTuple :: TLam -> Bool
+isTuple (TTuple _) = True
+isTuple _ = False
 
 --Valida o tipo do argumento e retorna o tipo de retorno da função 
 validaArgumento :: Type -> Type -> Type
@@ -81,6 +85,18 @@ typeOf ctx (App t1 t2) = let tyT1 = typeOf ctx t1
                                             else tyT2 --Retorna o erro
                                     else TypeErr "O primeiro termo da aplicacao nao eh uma funcao/abstracao"          
                             else tyT1 --Retorna o erro
+typeOf ctx (TTuple (t1, t2)) = let tyT1 = typeOf ctx t1
+                               in TypeTuple (tyT1, typeOf ctx t2)
+typeOf ctx (TProjTuple (TTuple (t1,t2)) index) = if index == 1 then
+												 					typeOf ctx t1
+												            else if index == 2 then
+												               if isTuple t2 then
+												                 typeOf ctx (TProjTuple t2 (index-1))
+												               else
+												                 typeOf ctx t2  
+												            else
+												               typeOf ctx (TProjTuple t2 (index-1))
+                            
         
 --Função que verifica se um termo possui um tipo diferente de erro                            
 isWellTyped :: Type -> Bool
