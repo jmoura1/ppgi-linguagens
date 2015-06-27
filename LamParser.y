@@ -29,7 +29,10 @@ import Lam
       ';'             { TokenSeq } 
       let             { TokenLet }
       in              { TokenIn }  
-      '='             { TokenEquals } 
+      '='             { TokenEquals }
+      '{' 		       { TokenOCB }
+      '}' 		       { TokenCCB }
+      ',' 		       { TokenComma } 
       Bool            { TokenBool } 
       Nat	          { TokenNat }
       Unit 		       { TokenUnitTy }	
@@ -40,55 +43,72 @@ import Lam
 %%
       
 --Regras de Produção da Gramática
-TLamReg : var                                       { Var $1 }
-        | '(' var ')'                               { Var $2 }
+TLamReg : var                                                       { Var $1 }
+        | '(' var ')'                                               { Var $2 }
         
-        | lam var ':' Bool '.' TLamReg              { Abs $2 TypeBool $6 }    
-        | '(' lam var ':' Bool '.' TLamReg ')'      { Abs $3 TypeBool $7 }
+        | lam var ':' TLamRegType '.' TLamReg                       { Abs $2 $4 $6 }    
+        | '(' lam var ':' TLamRegType '.' TLamReg ')'               { Abs $3 $5 $7 }
         
-        | lam var ':' Nat '.' TLamReg               { Abs $2 TypeNat $6 }    
-        | '(' lam var ':' Nat '.' TLamReg ')'       { Abs $3 TypeNat $7 }    
+        | lam var ':' '{' TLamRegTypeTuple '}' '.' TLamReg          { Abs $2 (list2typeTuple $5) $8 }    
+        | '(' lam var ':' '{' TLamRegTypeTuple '}' '.' TLamReg ')'  { Abs $3 (list2typeTuple $6) $9 }         
+        
+        | TLamReg TLamReg                                           { App $1 $2 } 
+        | '(' TLamReg TLamReg ')'                                   { App $2 $3 } 
+        
+        | true                                                      { TTrue }
+        | '(' true ')'                                              { TTrue }  
+        
+        | false                                                     { TFalse }
+        | '(' false ')'                                             { TFalse }
+        
+        | if TLamReg then TLamReg else TLamReg                      { TIf $2 $4 $6 }
+        | '(' if TLamReg then TLamReg else TLamReg ')'              { TIf $3 $5 $7 }
+        
+        | int                                                       { num2lam $1 }
+        | '(' int ')'                                               { num2lam $2 }
+        
+        | succ TLamReg                                              { TSucc $2 }
+        | '(' succ TLamReg ')'                                      { TSucc $3 }
+        
+        | pred TLamReg                                              { TPred $2 }
+        | '(' pred TLamReg ')'                                      { TPred $3 }
+        
+        | iszero TLamReg                                            { TIsZero $2 } 
+        | '(' iszero TLamReg ')'                                    { TIsZero $3 }
+        
+        | unit                           		 	                    { TUnit } 
+        | '(' unit ')'                   		 	                    { TUnit } 
 
-        | lam var ':' Unit '.' TLamReg              { Abs $2 TypeUnit $6 }    
-        | '(' lam var ':' Unit '.' TLamReg ')'      { Abs $3 TypeUnit $7 }         
+        | TLamReg ';' TLamReg                                       { TSeq $1 $3 }
+        | '(' TLamReg ';' TLamReg ')'                               { TSeq $2 $4 }
         
-        | TLamReg TLamReg                           { App $1 $2 } 
-        | '(' TLamReg ')' '(' TLamReg ')'           { App $2 $5 }
-        | '(' TLamReg ')' TLamReg                   { App $2 $4 }
-        | TLamReg '(' TLamReg ')'                   { App $1 $3 }
+        | let var '=' TLamReg in TLamReg                            { TLet $2 $4 $6 } 
+        | '(' let var '=' TLamReg in TLamReg ')'                    { TLet $3 $5 $7 }
         
-        | true                                      { TTrue }
-        | false                                     { TFalse }
-        | if TLamReg then TLamReg else TLamReg      { TIf $2 $4 $6 }
-        | '(' if TLamReg then TLamReg else TLamReg ')' { TIf $3 $5 $7 }
+        | '{' TLamRegTuple '}'                                      { list2tuple $2 } 
+        | '(' '{' TLamRegTuple '}' ')'                              { list2tuple $3 } 
         
-        | int                                       { num2lam $1 }
-        
-        | succ TLamReg                              { TSucc $2 }
-        | succ '(' TLamReg ')'                      { TSucc $3 }
-        
-        | pred TLamReg                              { TPred $2 }
-        | pred '(' TLamReg ')'                      { TPred $3 }
-        
-        | iszero TLamReg                            { TIsZero $2 } 
-        | iszero '(' TLamReg ')'                    { TIsZero $3 } 
-        
-        | unit                           		 	    { TUnit } 
+        | '{' TLamRegTuple '}' '.' int                              { TProjTuple (list2tuple $2) $5 } 
+        | '(' '{' TLamRegTuple '}' '.' int ')'                      { TProjTuple (list2tuple $3) $6 } 
 
-        | TLamReg ';' TLamReg                       { TSeq $1 $3 }
-        | '(' TLamReg ')' ';' '(' TLamReg ')'       { TSeq $2 $6 }
-        
-        | let var '=' TLamReg in TLamReg                 { TLet $2 $4 $6 } 
-        | let var '=' '(' TLamReg ')' in TLamReg         { TLet $2 $5 $8 }
-        | let var '=' TLamReg in '(' TLamReg ')'         { TLet $2 $4 $7 }
-        | let var '=' '(' TLamReg ')' in '(' TLamReg ')' { TLet $2 $5 $9 }  
+
+TLamRegType : Bool   { TypeBool }
+            | Nat    { TypeNat }
+            | Unit   { TypeUnit }
+	
+TLamRegTuple : TLamReg                   { [$1] }
+             | TLamReg ',' TLamRegTuple  { $1 : $3 }
+             
+TLamRegTypeTuple : TLamRegType                       { [$1] }
+                 | TLamRegType ',' TLamRegTypeTuple  { $1 : $3 }                  
+
 {
 
 -- Erros
 parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
---Tipos de dados TLam -> módulo TLam
+--Tipos de Dados Auxiliares
 
 -- Tipos de Dados Tokens 
 data Token = TokenLam
@@ -111,6 +131,9 @@ data Token = TokenLam
            | TokenLet 
            | TokenIn
            | TokenEquals
+           | TokenOCB
+           | TokenCCB
+           | TokenComma 
            | TokenBool 
            | TokenNat 
            | TokenUnitTy deriving Show 
@@ -127,6 +150,9 @@ lexer (')':cs) = TokenCB : lexer cs
 lexer (':':cs) = TokenBind : lexer cs
 lexer (';':cs) = TokenSeq : lexer cs
 lexer ('=':cs) = TokenEquals : lexer cs
+lexer ('{':cs) = TokenOCB : lexer cs
+lexer ('}':cs) = TokenCCB : lexer cs
+lexer (',':cs) = TokenComma : lexer cs
 
 lexAlpha cs =
    case span isAlpha cs of
@@ -155,6 +181,24 @@ num2lam n
    | n < 0 = error "Eu não posso converter inteiro negativo para TLam!"
    | n == 0 = TZero
    | otherwise = (TSucc (num2lam (n-1)))
+
+--Função que converte uma lista de TLam em um TTuple   
+list2tuple :: [TLam] -> TLam
+list2tuple (c:cs) = if length cs < 1 then
+                        error "A tupla deve ter no mínimo dois elementos TLam!"
+                     else if length cs == 1 then
+                     	TTuple (c, (head cs))
+                     else   
+								TTuple (c, (list2tuple cs)) 
+								
+--Função que converte uma lista de Type em um TypeTuple   
+list2typeTuple :: [Type] -> Type
+list2typeTuple (c:cs) = if length cs < 1 then
+                           error "A tupla deve ter no mínimo dois elementos com Tipos!"
+                        else if length cs == 1 then
+                     	   TypeTuple (c, (head cs))
+                     else   
+								TypeTuple (c, (list2typeTuple cs))								  
 
 main = getContents >>= print . calc . lexer
 

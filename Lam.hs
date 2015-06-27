@@ -24,9 +24,9 @@ data TLam = Var Char
           | TUnit 
           | TSeq TLam TLam
           | TLet Char TLam TLam 
-          | TTuple (TLam, TLam) 
+          | TTuple (TLam, TLam)
           | TProjTuple TLam Int deriving (Show)
-
+          
 {-Em função dos tipos não funciona mais
 
 --Função que indica as variáveis livres de uma sintaxe abstrata Lambda
