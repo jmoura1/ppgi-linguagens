@@ -18,6 +18,8 @@ data NLam = NVar Int
           | NUnit 
           | NSeq NLam NLam
           | NLet Int NLam NLam
+          | NTuple (NLam, NLam) 
+          | NProjTuple NLam Int
           deriving (Show, Eq)
 
 --Contexto de nomes
@@ -59,11 +61,18 @@ removeNames g TUnit = NUnit
 removeNames g (TSeq t1 t2) = let t1' = removeNames g t1
                                  t2' = removeNames g t2
                              in NSeq t1' t2' 
---Ver se está com erro
 removeNames g (TLet c t1 t2) = let ctx = (g ++ [c])
                                    t1' = removeNames ctx t1
                                    t2' = removeNames ctx t2
                                in NLet 0 t1' t2'    
+removeNames g (TTuple (t1, t2)) = let t1' = removeNames g t1
+                                      t2' = removeNames g t2
+                                  in NTuple (t1', t2')
+removeNames g (TProjTuple (TTuple (t1,t2)) index) = let t1' = removeNames g t1
+                                                        t2' = removeNames g t2
+                                                    in NProjTuple (NTuple (t1', t2')) index
+
+
 
 --Função restoreNames (troca os números por nomes)
 restoreNames :: NContext -> NLam -> TLam 
