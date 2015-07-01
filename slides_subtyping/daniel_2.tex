@@ -1,0 +1,67 @@
+\begin{frame}
+   \frametitle{15.4 The Top and Bottom Types}
+   \begin{block}{Formas de subtipos - Top e Bot}
+      \footnotesize\emph{Formas sintáticas:} \\
+      \hspace{1.2in} $T ::= ...$ \\
+      \hspace{1.5in} $Top$ \\
+      \hspace{1.5in} $Bot$ \\
+      
+      \vspace{0.15in}
+      
+      \footnotesize\emph{Regras de subtipos:} \\
+      \hspace{1.2in} $S <: Top$ $\qquad \textsc{(S-Top)}$ \\
+      \vspace{0.1in}      
+      \hspace{1.2in} $Bot <: T$ $\qquad \textsc{(S-Bot)}$ \\
+      
+      \vspace{0.05in}
+   \end{block}
+   \small Adaptado de \citep{pierce}.
+\end{frame}
+
+\begin{frame}
+   \frametitle{15.4 The Top and Bottom Types}
+   \begin{itemize}
+      \setlength\itemsep{0.1in}
+      \item Top:
+         \begin{itemize}
+            \item [$\checkmark$] Elemento \textbf{máximo} da relação de subtipos;
+            \item [$\checkmark$] Equivale ao tipo \emph{Object} das linguagens orientadas a objetos;
+            \item [$\checkmark$] Dispositivo técnico sofisticado em sistemas que combinam subtipos com poliformismo.
+         \end{itemize}
+
+      \item Bot:
+         \begin{itemize}
+            \item [$\checkmark$] Elemento \textbf{mínimo} da relação de subtipos;
+            \item [$\checkmark$] Tipo vazio (não existem valores do tipo Bot);
+	    \item [$\checkmark$] Muito útil para expressar algumas operações que não visam retorno de valores, como exceções, pois:
+	    \begin{itemize}
+	       \item [--] Permite ao programador definir expressões sem retorno com o tipo Bot;
+	       \item [--] Indica ao \emph{typechecker} que a expressão pode ser utilizada com segurança em qualquer contexto.
+	    \end{itemize}
+         \end{itemize}   
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{15.4 The Top and Bottom Types}
+   \begin{itemize}
+      \item Exemplo:
+   \end{itemize}
+   $\lambda{}x:T.$ \\
+   \quad if $<$ valor apropriado para x $>$ then \\
+   \quad \quad $<$ calcula o resultado $>$ \\
+   \quad else \\
+   \quad \quad error
+\end{frame}
+
+\begin{frame}
+   \frametitle{15.4 The Top and Bottom Types}
+   \begin{itemize}
+      \item Tipo \texttt{Bot} dificulta a implementação;
+      \item Mudança da regra de tipo da aplicação:
+      \begin{itemize}
+         \item [$\checkmark$] \texttt{t1 t2} : 
+         \item [$\checkmark$] \texttt{t1} pode ser tanto do tipo seta ($T1 \rightarrow T2$) ou do tipo \texttt{Bot}.
+      \end{itemize}
+   \end{itemize}
+\end{frame}

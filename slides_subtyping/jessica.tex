@@ -1,0 +1,71 @@
+%inicio jessica
+\begin{frame}
+\frametitle{SLIDES JÉSSICA} %Tipos de Funções}
+%\begin{itemize}
+%\item Para construir um tipo que combine booleanos com primitivas do cálculo lambda é preciso
+%adicionar uma classificação para os termos cuja avaliação resulta em uma função;
+%\item A fim de ter certeza de que a função irá se comportar corretamente quando for chamada, precisamos manter o controle de qual o tipo de argumento que ela espera.
+%\end{itemize}
+\end{frame}
+
+\begin{comment}
+\begin{frame}
+\frametitle{Tipos de Funcoes}
+\begin{itemize}
+\item Para manter esta informação, podemos utilizar um novo tipo:
+\end{itemize}
+\begin{eqnarray*}
+    & T ::= \\
+    && Bool \\
+    && T \to T\\
+\end{eqnarray*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Tipos de Funções}
+\begin{itemize}
+\item Exemplo:
+\end{itemize}
+\begin{eqnarray*}
+    & Bool \to Bool \\
+    & (Bool \to Bool) \to (Bool \to Bool) \\
+\end{eqnarray*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Relação  de Tipos}
+\begin{itemize}
+\item Para saber o tipo de uma abstração como \textcolor{red}{$"\lambda x.t"$}, precisamos calcular o que acontece quando essa abstração é aplicada a algum argumento;
+\item Abordagem utilizada agora: anotar a abstração com o tipo esperado para seus argumentos.
+\item Exemplo: \textcolor{red}{$"\lambda x.t"$} será \textcolor{red}{$"\lambda x:T1 .t2"$}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Relação  de Tipos}
+\begin{itemize}
+\item Termos podem conter abstrações aninhadas. Com isso em mente, utilizaremos $\Gamma \vdash t : T$ onde $\Gamma$ é um conjunto com as variáveis livres de t e seus respectivos tipos. Sendo assim, a regra de tipo para abstrações será:
+\end{itemize}
+ \begin{center}
+{\huge $\frac{\Gamma ,x\ :\ T_1 \vdash t_2\  :\  T_2}{\Gamma\  \vdash\  \lambda x\  :\ T_1 .t_2\  :\  T_1 \to T_2}$}  $\qquad (T-Abs)$
+ \end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Relação  de Tipos}
+\begin{itemize}
+\item A regra para variável é:
+\end{itemize}
+ \begin{center}
+{\huge $\frac{x:T\ \in\ \Gamma}{\Gamma\ \vdash\ x\ :\ T}$}  $\qquad (T-Var)$
+ \end{center}
+ \begin{itemize}
+\item A regra para aplicação é:
+\end{itemize}
+ \begin{center}
+{\huge $\frac{\Gamma\  \vdash\ t_1\ :\ T_{11} \to T_{12} \quad \Gamma\ \vdash\ t_2 : T_{11}}{\Gamma\  \vdash\ t_1\ t_2\ :\ T_{12}}$}  $\qquad (T-App)$
+ \end{center}
+\end{frame}
+%fim jessica
+
+\end{comment}

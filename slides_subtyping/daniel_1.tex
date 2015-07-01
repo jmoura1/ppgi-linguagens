@@ -1,0 +1,61 @@
+\begin{frame}
+   \frametitle{15 Subtyping}
+   \begin{itemize}
+      \item Também chamado de \emph{subtype polymorphism};
+      \item Característica presente nas linguagens orientadas a objetos;
+      \item Cálculo Lambda simplesmente tipado com subtipos: \Large $\lambda_{<:}$
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{15.1 Subsumption}
+   \begin{itemize}
+      \item Sem subtipos:
+         \begin{itemize}
+            \item [$\checkmark$] Regras de tipos bastante rígidas;
+            \item [$\checkmark$] Rejeição de expressões que, aos olhos do programador, são bem tipadas.
+         \end{itemize}
+      \item Exemplo:
+   \end{itemize}
+   \begin{center}
+      $\infer{\Gamma  \vdash t_1 t_2 : T_{11}} {\Gamma  \vdash t_1 : T_{11} \rightarrow T_{12} \qquad \Gamma \vdash t_2 : T_{11}}$ $\qquad \textsc{(T-App)}$ \\
+      
+      \vspace{0.4in}
+      
+      $(\lambda{}r\colon\{x:Nat\}. \quad r.x) \quad \{x=0,y=1\}$ \qquad \alt<2>{\textcolor{green}{Válido}}{Inválido?}
+   \end{center}   
+\end{frame}
+
+\begin{frame}
+   \frametitle{15.1 Subsumption}
+   \begin{itemize}
+      \item Objetivo dos subtipos:
+      \begin{itemize}
+         \item [$\checkmark$] Refinamento das regras de tipos;
+         \item [$\checkmark$] Se S é subtipo de T ($S <: T$), qualquer termo do tipo S pode ser 
+                              utilizado no contexto onde T é esperado;
+         \item [$\checkmark$] Princípio da substituição segura (\emph{safe substituition}).                              
+      \end{itemize}
+   \end{itemize}
+   
+   \vspace{0.2in}
+   
+   \begin{block}{Regra \emph{Subsumption}}
+      \begin{center}
+         $\infer{\Gamma \vdash t : T} {\Gamma \vdash t : S \qquad S <: T}$ $\qquad \textsc{(T-Sub)}$ \\
+      \end{center}
+   \end{block}
+   \small Adaptado de \citep{pierce}.
+\end{frame}
+
+\begin{frame}
+   \frametitle{15.1 Subsumption}
+   \begin{itemize}
+      \item Exemplo: $(\lambda{}r\colon\{x:Nat\}. \quad r.x) \quad \{x=0,y=1\}$
+      \begin{itemize}
+         \setlength\itemsep{0.1in}
+         \item [$\checkmark$] Considerando que: $\{x:Nat,y:Nat\} <: \{x:Nat\}$
+         \item [$\checkmark$] A regra \textsc{T-Sub} permite a aplicação pois são tipos válidos.
+      \end{itemize}   
+   \end{itemize}   
+\end{frame}
