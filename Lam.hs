@@ -2,8 +2,12 @@ module Lam where
 
 --Tipos
 data Type = TypeBool
-          | TypeFunc Type Type 
-          | TypeErr String deriving (Show,Eq,Ord) 
+			 | TypeNat
+          | TypeFunc Type Type
+          | TypeUnit
+          | TypeErr String 
+          | TypeTuple (Type, Type) 
+          | TypeRecord ((Char, Type), Type) deriving (Show,Eq,Ord) 
 
 --data = operador que possibilida o usuário construir tipos novos
 --TLam significa Termos Lambda - aqui está se definindo uma árvore de sintaxe abstrata
@@ -16,8 +20,13 @@ data TLam = Var Char
           | TZero
           | TSucc TLam
           | TPred TLam
-          | TIsZero TLam deriving (Show)
-
+          | TIsZero TLam 
+          | TUnit 
+          | TSeq TLam TLam
+          | TLet Char TLam TLam 
+          | TTuple (TLam, TLam)
+          | TProjTuple TLam Int deriving (Show)
+          
 {-Em função dos tipos não funciona mais
 
 --Função que indica as variáveis livres de uma sintaxe abstrata Lambda
