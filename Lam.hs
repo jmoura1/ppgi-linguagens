@@ -7,7 +7,7 @@ data Type = TypeBool
           | TypeUnit
           | TypeErr String 
           | TypeTuple (Type, Type) 
-          | TypeRecord ((Char, Type), Type) deriving (Show,Eq,Ord) 
+          | TypeRecord [(Char, Type)] deriving (Show,Eq,Ord) 
 
 --data = operador que possibilida o usuário construir tipos novos
 --TLam significa Termos Lambda - aqui está se definindo uma árvore de sintaxe abstrata
@@ -25,7 +25,8 @@ data TLam = Var Char
           | TSeq TLam TLam
           | TLet Char TLam TLam 
           | TTuple (TLam, TLam)
-          | TProjTuple TLam Int deriving (Show)
+          | TProjTuple TLam Int 
+          | TRecord [(Char, TLam)] deriving (Show)
           
 {-Em função dos tipos não funciona mais
 

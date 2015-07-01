@@ -146,6 +146,10 @@ isValNL (NAbs t) = True
 isValNL NTrue  = True
 isValNL NFalse = True
 isValNL NUnit = True
+isValNL (NTuple (t1,t2)) = if isValNL t1 then
+                             isValNL t2
+                           else
+                             False  
 isValNL t = isNumber t 
 
 --Função que verificar se um NLam é um tipo True ou False
@@ -161,42 +165,17 @@ isNumber (NSucc NZero) = True
 isNumber (NSucc t) = isNumber t
 isNumber _ = False
 
---Função retorna o índice do último termo valor da tupla. 
---No caso de o idxFim ser igual ao índice deste termo, retorna idxFim+1 
-lastProjTupleValue :: NLam -> Int -> Int -> Int
-lastProjTupleValue (NTuple (t1,t2)) idxIni idxFim = if isValNL t1 then
-                                                      if idxFim > idxIni then
-                                                        lastProjTupleValue t2 (idxIni+1) idxFim
-                                                      else
-                                                        idxFim+1  
-                                                    else
-                                                      idxIni
-lastProjTupleValue t idxIni idxFim = if idxIni == idxFim then 
-                                       if isValNL t then
-                                         idxFim+1
-                                       else
-                                         idxIni  
-                                     else
-                                       error "O índice da projeção é maior que o número de elementos da tupla!"
-
---Função que avalia o índice desejado da tupla, retornando-a com o termo já avaliado 
-evalTupleByIndex :: NLam -> Int -> NLam
-evalTupleByIndex (NTuple (t1,t2)) index = if index == 1 then
-                                            let t1' = evalCBVNL t1
-                                            in NTuple(t1', t2) 
-                                          else 
-                                            	 NTuple(t1, (evalTupleByIndex t2 (index-1)))
-evalTupleByIndex t index = evalCBVNL t  
-                                               
-
---Função que retorna o NLam do índice desejado da tupla
-findTLamTupleByIndex :: NLam -> NLam 
-findTLamTupleByIndex (NProjTuple (NTuple (t1,t2)) index) = if index == 1 then
+--Função que retorna o NLam do índice da projeção da tupla
+findProjTupleByIndex :: NLam -> NLam 
+findProjTupleByIndex (NProjTuple (NTuple (t1,t2)) index) = if index == 1 then
                                                              t1
                                                            else 
-                                                             findTLamTupleByIndex (NProjTuple t2 (index-1))
-findTLamTupleByIndex (NProjTuple t index) = t
-findTLamTupleByIndex _ = error "O parâmetro não é uma projeção de TTuple"                
+                                                             findProjTupleByIndex (NProjTuple t2 (index-1))
+findProjTupleByIndex (NProjTuple t index) = if index == 1 then
+                                              t
+                                            else
+                                              error "O índice da projeção não indica nenhum elemento da tupla!"  
+findProjTupleByIndex _ = error "O parâmetro não é uma projeção de NTuple"                
 
 --Função que chama a função de avaliação recursivamente
 interpretNLam :: NLam -> NLam
@@ -258,10 +237,14 @@ evalCBVNL (NLet n t1 t2) = if isValNL t1 then
                              subsNL (n, t1) t2
                            else
                              NLet n (evalCBVNL(t1)) t2
-evalCBVNL (NProjTuple (NTuple (t1,t2)) index) = --E-PROJTUPLE, E-PROJ e E-TUPLE
-												 			   let idxLastValue = lastProjTupleValue (NTuple (t1,t2)) 1 index
-												 			   in if idxLastValue > index then
-												 			        findTLamTupleByIndex (NProjTuple (NTuple (t1,t2)) index)
-												 			      else
-												 			        let tupleEvaluated = evalTupleByIndex (NTuple (t1,t2)) idxLastValue
-												 			        in (NProjTuple tupleEvaluated index)
+
+evalCBVNL (NTuple (t1,t2)) = if isValNL t1 then
+                               NTuple(t1, evalCBVNL t2)
+                             else
+                               let t1' = evalCBVNL t1
+                               in NTuple(t1', t2)                             
+evalCBVNL (NProjTuple (NTuple (t1,t2)) index) = if isValNL (NTuple (t1,t2)) then
+                                                  findProjTupleByIndex (NProjTuple (NTuple (t1,t2)) index) --E-PROJTUPLE
+                                                else --E-PROJ e E-TUPLE
+                                                  let tupleEvaluated = evalCBVNL (NTuple (t1,t2))
+                                                  in (NProjTuple tupleEvaluated index)
