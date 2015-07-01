@@ -87,15 +87,20 @@ typeOf ctx (App t1 t2) = let tyT1 = typeOf ctx t1
                             else tyT1 --Retorna o erro
 typeOf ctx (TTuple (t1, t2)) = let tyT1 = typeOf ctx t1
                                in TypeTuple (tyT1, typeOf ctx t2)
-typeOf ctx (TProjTuple (TTuple (t1,t2)) index) = if index == 1 then
+typeOf ctx (TProjTuple (TTuple (t1,t2)) index) = if index <= 0 then
+                                                   TypeErr "O índice da projecao deve ser maior que 0" 
+                                                 else if index == 1 then
 												 					typeOf ctx t1
-												            else if index == 2 then
+												             else if index == 2 then
 												               if isTuple t2 then
 												                 typeOf ctx (TProjTuple t2 (index-1))
 												               else
 												                 typeOf ctx t2  
-												            else
-												               typeOf ctx (TProjTuple t2 (index-1))
+												             else
+												               if isTuple t2 then
+												               	typeOf ctx (TProjTuple t2 (index-1))
+												               else
+												               	TypeErr "O indice da projecao e maior que o numero de elementos" 
                             
         
 --Função que verifica se um termo possui um tipo diferente de erro                            
@@ -105,8 +110,8 @@ isWellTyped _             = True
 
 --Função interpret () com tipos
 --Função que chama a função de avaliação recursivamente
-interpret :: TLam -> NLam
+interpret :: TLam -> TLam
 interpret t = if (isWellTyped (typeOf contextoTipo t))
 				     then let tN = removeNames contexto t
-                      in interpretNLam tN
+                      in restoreNames contexto (interpretNLam tN)
               else error "Erro na validacao de tipos"        

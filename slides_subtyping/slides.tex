@@ -1,0 +1,97 @@
+\documentclass[table, usenames, svgnames, dvipsnames]{beamer}
+\usepackage{listings}
+\usepackage{beamerthemeshadow}
+\usepackage[latin1]{inputenc}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{array}
+
+% Coisas adicionadas pelo Alberto.
+\usepackage{proof}
+\usepackage{easylist}
+% \usepackage[portuguese]{babel}
+\usepackage{amsmath}
+\usepackage[round]{natbib}
+
+\usepackage{verbatim}
+
+\usetheme{Rochester}
+%\usetheme{Luebeck}
+\usecolortheme{rose}
+
+\setbeamerfont{frametitle}{size=\normalsize}
+\setbeamerfont{title}{size=\normalsize}
+\beamertemplatenavigationsymbolsempty
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{}
+
+\DeclareGraphicsExtensions{.pdf,.jpg,.png} % compilamos apenas com pdflatex
+\graphicspath{{.}{./figuras/}} % caminho onde as figuras estarao disponiveis
+
+\setlength{\TPHorizModule}{1mm}
+
+\setlength{\TPVertModule}{1mm}
+\newcommand{\MyLogo}{%
+\begin{textblock}{}(118.5, 2.5)
+   \includegraphics[width=0.7cm]{figuras/ime-mod2.png}
+\end{textblock}
+}
+
+\title{\footnotesize Subtipos e Metateoria dos Subtipos}
+
+% \usepackage{framed} % utilizado para codigo fonte
+\definecolor{shadecolor}{named}{LightGray}
+
+\usepackage[portuguese]{babel}
+
+% ---------------------------------------------------------------------------- %
+% Título
+% ---------------------------------------------------------------------------- %
+
+\subtitle{}
+\date{}
+
+% ---------------------------------------------------------------------------- %
+\begin{document}
+% ---------------------------------------------------------------------------- %
+
+% ---------------------------------------------------------------------------- %
+% Primeira página: slide 0
+% --------------------------------------------------------------------------- - %
+\begin{frame}
+   \centering
+   \textsc{Universidade Federal de Santa Maria}\\
+   \textsc{Programa de Pós-Graduação em Informática - PPGI}\\
+   \vspace{15pt}
+   \titlepage
+   \vspace{-60pt}
+   \begin{center}
+      \textsc{Linguagens de Programação -- ELC921}\\
+      \textsc{Profª Drª Juliana Kaiser Vizzotto}\\
+      \hfill\\
+      \textsc{Alunos:} Alberto Kummer, Daniel Di Domenico, Fernando Campagnolo, Jéssica Lasch de Moura e José Puiati
+   \end{center}
+\end{frame}
+
+%Seção 15.1
+\input{daniel_1.tex}
+
+%Seção 15.2
+\input{jessica.tex}
+
+%Seção 15.4 e 16.4
+\input{daniel_2.tex}
+
+%Seção 15.5
+\input{fernando.tex}
+
+%Seção 15.6 e 15.7
+\input{alberto.tex}
+
+%Seção 16, 16.1 e 16.2
+\input{kadico.tex}
+
+\bibliography{referencias}
+\bibliographystyle{plainnat}
+
+\end{document}
