@@ -7,7 +7,7 @@ import LamParser
 --Definição de um tipo para o contexto usado no type checker
 type TContext = [(Char,Type)]
 
-contextoTipo = [('a', TypeBool), ('b', TypeBool), ('c', TypeBool)]
+contextoTipo = [('a', TypeRecord[('x', TypeBool), ('y', TypeNat)]), ('b', TypeBool), ('c', TypeBool)]
 
 --Testa se nao é erro
 isNotError :: Type -> Bool
@@ -37,6 +37,14 @@ validaArgumento (TypeFunc tyT1 tyT1') tyT2 = if (tyT1 == tyT2)
                                                then tyT1' 
                                             else TypeErr "Argumento recebido nao eh do tipo esperado pela funcao"
                         
+getTypeFromRecord :: [(Char, Type)] -> Char -> Type
+getTypeFromRecord (h:t) label = if (fst h) == label then
+											 snd h
+										  else
+										     if length t > 0 then
+    										     getTypeFromRecord t label											
+    										  else
+    										  	   TypeErr "O label não existe no registro."
 
 --Função que retorna o tipo de um termo
 typeOf :: TContext -> TLam -> Type
@@ -70,7 +78,10 @@ typeOf ctx (TLet x t1 t2) = let tyT1 = typeOf ctx t1
                                 ctx' = addType ctx x tyT1
                                 tyT2  = typeOf ctx' t2
                             in tyT2 
-typeOf ctx (Var char) = findType char ctx    
+typeOf ctx (Var char) = findType char ctx 
+typeOf ctx (Abs char (TypeRecord tipos) (TProjRecord a label)) = 
+																	 let ctx' = addType ctx char (TypeRecord tipos) in
+                                                    	TypeFunc (TypeRecord tipos) (getTypeFromRecord tipos label)      
 typeOf ctx (Abs char tyT1 t2) = let ctx' = addType ctx char tyT1 
                                     tyT2 = typeOf ctx' t2 
                                 in if (isNotError tyT2) 
@@ -100,8 +111,21 @@ typeOf ctx (TProjTuple (TTuple (t1,t2)) index) = if index <= 0 then
 												               if isTuple t2 then
 												               	typeOf ctx (TProjTuple t2 (index-1))
 												               else
-												               	TypeErr "O indice da projecao e maior que o numero de elementos" 
-                            
+												               	TypeErr "O indice da projecao e maior que o numero de elementos"
+typeOf ctx (TRecord (h:t)) = let t1 = typeOf ctx (snd h)
+                             in if length t > 0 then
+                                  let TypeRecord t2 = typeOf ctx (TRecord t)
+                                  in TypeRecord ([(fst h, t1)] ++ t2)
+                                else
+                                  TypeRecord [(fst h, t1)] 
+typeOf ctx (TProjRecord (TRecord (h:t)) label) = if (fst h) == label then
+                                                    typeOf ctx (snd h)
+                                                  else
+                                                    if length t > 0 then
+                                                      typeOf ctx (TProjRecord (TRecord t) label)
+                                                    else
+                                                      TypeErr "O label da projecao nao existe nos elementos do TRecord" 
+typeOf ctx (TProjRecord t label) = typeOf ctx t                                   
         
 --Função que verifica se um termo possui um tipo diferente de erro                            
 isWellTyped :: Type -> Bool
