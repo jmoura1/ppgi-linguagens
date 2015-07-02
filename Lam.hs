@@ -26,7 +26,8 @@ data TLam = Var Char
           | TLet Char TLam TLam 
           | TTuple (TLam, TLam)
           | TProjTuple TLam Int 
-          | TRecord [(Char, TLam)] deriving (Show)
+          | TRecord [(Char, TLam)]
+          | TProjRecord TLam Char  deriving (Show)
           
 {-Em função dos tipos não funciona mais
 

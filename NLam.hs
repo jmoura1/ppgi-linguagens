@@ -20,6 +20,8 @@ data NLam = NVar Int
           | NLet Int NLam NLam
           | NTuple (NLam, NLam) 
           | NProjTuple NLam Int
+          | NRecord [(Char, NLam)]
+          | NProjRecord NLam Char
           deriving (Show, Eq)
 
 --Contexto de nomes
@@ -71,6 +73,15 @@ removeNames g (TTuple (t1, t2)) = let t1' = removeNames g t1
 removeNames g (TProjTuple (TTuple (t1,t2)) index) = let t1' = removeNames g t1
                                                         t2' = removeNames g t2
                                                     in NProjTuple (NTuple (t1', t2')) index
+removeNames g (TRecord (h:t)) = let t1 = removeNames g (snd h)
+                                in if length t > 0 then
+                                     let NRecord t2 = removeNames g (TRecord t)
+                                     in NRecord ([(fst h, t1)] ++ t2)
+                                   else
+                                     NRecord [(fst h, t1)] 
+removeNames g (TProjRecord (TRecord l) label) = let t1 = removeNames g (TRecord l)
+                                                in NProjRecord t1 label
+                                                    
 
 
 
@@ -107,7 +118,15 @@ restoreNames g (NTuple (t1, t2)) = let t1' = restoreNames g t1
                                    in TTuple (t1', t2')
 restoreNames g (NProjTuple (NTuple (t1,t2)) index) = let t1' = restoreNames g t1
                                                          t2' = restoreNames g t2
-                                                     in TProjTuple (TTuple (t1', t2')) index                                
+                                                     in TProjTuple (TTuple (t1', t2')) index
+restoreNames g (NRecord (h:t)) = let t1 = restoreNames g (snd h)
+                                 in if length t > 0 then
+                                      let TRecord t2 = restoreNames g (NRecord t)
+                                      in TRecord ([(fst h, t1)] ++ t2)
+                                    else
+                                      TRecord [(fst h, t1)] 
+restoreNames g (NProjRecord (NRecord l) label) = let t1 = restoreNames g (NRecord l)
+                                                 in TProjRecord t1 label                                                                                     
                                 
 --Função shifting
 shifting :: (Int, Int) -> NLam -> NLam
@@ -149,7 +168,14 @@ isValNL NUnit = True
 isValNL (NTuple (t1,t2)) = if isValNL t1 then
                              isValNL t2
                            else
-                             False  
+                             False
+isValNL (NRecord (h:t)) = if isValNL (snd h) then
+                            if length t > 0 then
+                              isValNL (NRecord t)
+                            else
+                              True  
+                          else
+                            False                               
 isValNL t = isNumber t 
 
 --Função que verificar se um NLam é um tipo True ou False
@@ -248,3 +274,25 @@ evalCBVNL (NProjTuple (NTuple (t1,t2)) index) = if isValNL (NTuple (t1,t2)) then
                                                 else --E-PROJ e E-TUPLE
                                                   let tupleEvaluated = evalCBVNL (NTuple (t1,t2))
                                                   in (NProjTuple tupleEvaluated index)
+                                                  
+evalCBVNL (NRecord (h:t)) = if isValNL (snd h) then
+                               if length t > 0 then
+                               	let NRecord t1 = evalCBVNL (NRecord t)
+                               	in NRecord ([h] ++ t1)
+                               else
+                                 NRecord [h] 		
+                            else
+                               let t1 = evalCBVNL (snd h)
+                               in NRecord ((fst h, t1) : t)
+
+evalCBVNL (NProjRecord (NRecord (h:t)) label) = if isValNL (NRecord (h:t)) then
+                                                   if (fst h) == label then
+                                                     snd h
+                                                   else
+                                                     if length t > 0 then  	
+                                                       evalCBVNL (NProjRecord (NRecord t) label)
+                                                     else
+                                                       error "O label da projecao nao existe nos elementos do TRecord"  
+                                                else
+                                                   NProjRecord (evalCBVNL (NRecord (h:t))) label
+                                                   

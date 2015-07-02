@@ -100,8 +100,20 @@ typeOf ctx (TProjTuple (TTuple (t1,t2)) index) = if index <= 0 then
 												               if isTuple t2 then
 												               	typeOf ctx (TProjTuple t2 (index-1))
 												               else
-												               	TypeErr "O indice da projecao e maior que o numero de elementos" 
-                            
+												               	TypeErr "O indice da projecao e maior que o numero de elementos"
+typeOf ctx (TRecord (h:t)) = let t1 = typeOf ctx (snd h)
+                             in if length t > 0 then
+                                  let TypeRecord t2 = typeOf ctx (TRecord t)
+                                  in TypeRecord ([(fst h, t1)] ++ t2)
+                                else
+                                  TypeRecord [(fst h, t1)] 
+typeOf ctx (TProjRecord (TRecord (h:t)) label) = if (fst h) == label then
+                                                    typeOf ctx (snd h)
+                                                  else
+                                                    if length t > 0 then
+                                                      typeOf ctx (TProjRecord (TRecord t) label)
+                                                    else
+                                                      TypeErr "O label da projecao nao existe nos elementos do TRecord" 
         
 --Função que verifica se um termo possui um tipo diferente de erro                            
 isWellTyped :: Type -> Bool
