@@ -197,8 +197,8 @@ list2typeTuple (c:cs) = if length cs < 1 then
                            error "A tupla deve ter no mínimo dois elementos com Tipos!"
                         else if length cs == 1 then
                      	   TypeTuple (c, (head cs))
-                     else   
-								TypeTuple (c, (list2typeTuple cs))								  
+                        else   
+								   TypeTuple (c, (list2typeTuple cs))								  
 
 main = getContents >>= print . calc . lexer
 
