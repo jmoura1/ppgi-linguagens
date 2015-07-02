@@ -81,8 +81,8 @@ removeNames g (TRecord (h:t)) = let t1 = removeNames g (snd h)
                                      NRecord [(fst h, t1)] 
 removeNames g (TProjRecord (TRecord l) label) = let t1 = removeNames g (TRecord l)
                                                 in NProjRecord t1 label
-                                                    
-
+removeNames g (TProjRecord t label) = let t1 = removeNames g t
+                                      in NProjRecord t1 label                                                
 
 
 --Função restoreNames (troca os números por nomes)
@@ -144,7 +144,7 @@ shifting (d, c) t = t
 --         j     s       k
 --j = Índice a ser substituído
 --s = Termo que substitui o índice (j)
---k = Termo onde será aplicada a substituição
+--k = Termo onde será aplicada a substituição   subsNL (0, (shifting (1, 0) v2)) (t)
 subsNL :: (Int, NLam) -> NLam -> NLam
 subsNL (j, s) (NVar k) =
    if k == j then
@@ -284,7 +284,6 @@ evalCBVNL (NRecord (h:t)) = if isValNL (snd h) then
                             else
                                let t1 = evalCBVNL (snd h)
                                in NRecord ((fst h, t1) : t)
-
 evalCBVNL (NProjRecord (NRecord (h:t)) label) = if isValNL (NRecord (h:t)) then
                                                    if (fst h) == label then
                                                      snd h

@@ -100,7 +100,8 @@ TLamReg : var                                                       { Var $1 }
         | '{' TLamRegRecord '}' '.' var                             { TProjRecord (TRecord $2) $5 } 
         | '(' '{' TLamRegRecord '}' '.' var ')'                     { TProjRecord (TRecord $3) $6 }
         
-        --| var '.' var                                               {  
+        | var '.' var                                               { TProjRecord (Var $1) $3 }
+        | '(' var '.' var ')'                                       { TProjRecord (Var $2) $4 }
 
 
 TLamRegType : Bool   { TypeBool }
