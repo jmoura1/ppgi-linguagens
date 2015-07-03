@@ -9,8 +9,11 @@ Recomentações gerais:
 - Revise seus conhecimentos de Haskell em [*Learn you a Haskell for Great Good!*](http://learnyouahaskell.com/chapters)
 - Dê uma olhada no material disponibilizado pela Professora Juliana no [site da disciplina](http://www-usr.inf.ufsm.br/~juvizzotto/prog-lang/)
 
-#### Linguagens de programação utilizadas
+#### Linguagens de programação e ferramentas utilizadas
 - Haskell @ [GHC](https://www.haskell.org/ghc/)
+- [*Happy*](https://www.haskell.org/happy/)
+- Editor [Kate](http://kate-editor.org/) e IDE [KDevelop](https://www.kdevelop.org/)
+- ~~Editor [GEdit](https://wiki.gnome.org/Apps/Gedit)~~
 
 #### Funcionalidades da implementação:
 
