@@ -11,7 +11,7 @@ Recomentações gerais:
 
 #### Linguagens de programação e ferramentas utilizadas
 - Haskell @ [GHC](https://www.haskell.org/ghc/)
-- [*Happy*](https://www.haskell.org/happy/)
+- Gerador de Parser [Happy](https://www.haskell.org/happy/)
 - Editor [Kate](http://kate-editor.org/) e IDE [KDevelop](https://www.kdevelop.org/)
 - ~~Editor [GEdit](https://wiki.gnome.org/Apps/Gedit)~~
 
