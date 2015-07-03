@@ -7,14 +7,21 @@ Recomentações gerais:
 - Veja o livro [*Types and Programming Languages*](https://www.cis.upenn.edu/~bcpierce/tapl/)
 - Como material complementar, veja [*Essentials of Programming Languages*](https://mitpress.mit.edu/books/essentials-programming-languages)
 - Revise seus conhecimentos de Haskell em [*Learn you a Haskell for Great Good!*](http://learnyouahaskell.com/chapters)
+- Dê uma olhada no material disponibilizado pela Professora Juliana no [site da disciplina](http://www-usr.inf.ufsm.br/~juvizzotto/prog-lang/)
 
 #### Linguagens de programação utilizadas
 - Haskell @ [GHC](https://www.haskell.org/ghc/)
 
 #### Funcionalidades da implementação:
+
 - Cálculo lambda sem tipagem
    - Implementação de um parser através de [*Happy*](https://www.haskell.org/happy/)
    - Proteção contra captura de variáveis através de Distância estática / [Índices de Bruijn](http://en.wikipedia.org/wiki/De_Bruijn_index)
+- *Type Checker* para *Simple Types* do Cálculo Lambda (commit 532cc87)
+- Apresentação do Trabalho 4 (commit 373ba14): Expressões Aritméticas Tipadas e Cálculo Lambda Simplesmente Tipado
+- Adição dos novos tipos Nat, Unit, Let e Seq (commit 095de53)
+   - Melhoramento do TypeChecker para suportar os novos tipos (commit f1bccd5)
+
 
 #### Alunos envolvidos:
 - Jessica Moura
