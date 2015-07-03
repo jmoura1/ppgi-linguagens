@@ -1,0 +1,200 @@
+%início kadico
+\begin{frame}{SLIDES KADICO}% 9.3.1 - Lemma [Inversion of the typing relation]}
+  %\begin{itemize}
+  %\item {
+  %  If $\Gamma \vdash x : R$ , then $x : R \in \Gamma$.
+  %}
+  %\item {
+  %  If $\Gamma \vdash \lambda x : T_1 . t_2 : R$ , then $R : T_1 \rightarrow R_2$ for some $R_2$ with $\Gamma, x : T1 \vdash t_2 : R_2$.
+  %}
+  %\item {
+  %  If $\Gamma \vdash$ $t_1$ $t_2 : R$ , then there is some type $T_{11}$ for some $R_2$ with $\Gamma, x : T_1 \vdash t_2 : R_2$.
+  %}
+  %\item {
+  %  If $\Gamma \vdash true : Bool$ , then $R : Bool$.
+  %}
+  %\item {
+  %  If $\Gamma \vdash false : Bool$ , then $R : Bool$.
+  %}
+  %\item {
+  %  If $\Gamma \vdash $ if then $ t_2  $ else $ t_3 : R$ , then $\Gamma \vdash t_1 : Bool$ and $t_1$  $t_2 : R$.
+  %}
+  %\end{itemize}
+\end{frame}
+
+\begin{comment}
+\begin{frame}{9.3.3 - Theorem [Uniqueness of Types]}
+  \begin{itemize}
+  \item {
+    Give a context $\Gamma$ and a Term t, t must have at most one type.
+  }
+  \item {
+    [Proof] If $\Gamma \vdash x : T$ and $\Gamma \vdash x : S$ then S = T by T-Var.
+  }
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{9.3.4 - Lemma [Canonical Forms]}
+  \begin{itemize}
+  \item {
+    If v : Bool, then v is $true \mid false$.
+  }
+  \item {
+    If v : $T_1 \rightarrow T_2$ , then $v = \lambda x : T_1 . t_2$.
+  }
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{9.3.5 - Theorem [Progress]}
+
+  \begin{itemize}
+  \item {
+     If $\vdash k : T$ then either k is a value, or $k \rightarrow k'$ to some k'.
+  }
+  \item {
+     The variable case cannot occur.
+  }
+  \item {
+     The abstraction occur, since abstractions are values.
+  }
+  \item {
+     The application is not so simple.
+     \begin{itemize}
+      \item {
+         Case T-App: $k' = k_1$  $k_2$  $\mid$  $\vdash k_1 : T_{11} \rightarrow T_{12}$ and $k_2 : T_{11}$.
+      }
+      \item {
+         $k_1$ is a term or it can make a step, in the same way $k_2$.
+      }
+      \item {
+         If $k_1$ can make a step, then applies E-App1.
+      }
+      \item {
+         If $k_1$ is a value and $k_2$ can make a step, then applies E-App2.
+      }
+      \item {
+         If booth are value, then the canonical form of $k_1$ is $\lambda x : T_{11} . k_{12}$, and applies E-AppAbs.
+      }
+     \end{itemize}
+  }
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{9.3.6 - Lemma [Permutation]}
+  \begin{itemize}
+  \item {
+   If $\Gamma \vdash e : T$ and $\Gamma'$ is a permutation of $\Gamma$, then $\Gamma' \vdash e : T$.
+  }
+  \item {
+   Proof: $\Gamma \vdash e : T$
+  }
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{9.3.7 - Lemma [Weakening]}
+  \begin{itemize}
+  \item {
+     If $\Gamma \vdash e : T$ and $x \not\in dom(\Gamma)$, then $\Gamma, x : S \vdash t : T$.
+  }
+  \item {
+   Proof: $\Gamma \vdash e : T$
+  }
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{9.3.8 - Lemma [Preservation of Types Under the Substitution][1]}
+  \begin{itemize}
+  \item {
+    If $\Gamma, x : T' \vdash e : T$, and $\Gamma \vdash e' : T'$, then $\Gamma \vdash [x \rightarrow e'] e : T$
+  }
+  \item {
+   Proof: If $\Gamma, x : T' \vdash e : T$.
+ }
+  \item[?] {Case T-Var:}
+
+   \begin{itemize}
+   \item[?] \textbf{t = z with z : T $\in$ ($\Gamma$, x : S)}
+   \item {
+      If $z = x$, then $[x \rightarrow s] z = s$
+    }
+    \item {
+      Otherwise, $[x \rightarrow s] z = z$
+     }
+     \end{itemize}
+
+  \item[?] {Case T-Abs}
+   \begin{itemize}
+   \item[?] \textbf{t = $\lambda$ y : $T_2$ . $t_1$ \\
+               T = $T_2 \rightarrow T_1$ \\
+               $\Gamma$ x : S, y : $T_2 \vdash t_2 : T_1$
+               }
+   \item {
+      $x \not= y$, and $y \not\in FV(s)$.
+    }
+    \item {
+      Permutation $\Gamma y : T_2, x : S \vdash t_1 : T_1$
+     }
+     \item {
+      Weakening $\Gamma, y : T_2 \vdash s : S$
+     }
+     \item {
+      By induction $\Gamma, y : T_2 \vdash [x \rightarrow s] t_1 : T_1$
+     }
+     \item {
+      By T-Abs $\Gamma \vdash \lambda y : T_2 . [x \rightarrow s] t_1 : T_2 \rightarrow T_1$
+     }
+     \end{itemize}
+
+  \end{itemize}
+  \end{frame}
+\begin{frame}{9.3.8 - Lemma [Preservation of Types Under the Substitution][2]}
+  \begin{itemize}
+  \item[?] {Case T-App:}
+
+   \begin{itemize}
+   \footnotesize
+      \item {
+      By induction $\Gamma \vdash [x \rightarrow s] t_1 : T_2 \rightarrow T_1$ \\
+      and $\Gamma \vdash [x \rightarrow s] t_2 : T_2$
+     }
+     \item {
+      By T-App $\Gamma \vdash [x \rightarrow s] t_1 [x \rightarrow s] t_2 : T$
+     }
+   \end{itemize}
+
+  \item[?] {Case T-True and T-False}
+   \begin{itemize}
+   \item[?] \textbf{t = true \\
+                t = false \\
+                T = Bool}
+   \item {
+      $ [x \rightarrow s] t = (true \mid false)$, $\Gamma \vdash [x \rightarrow s] t : T$
+    }
+     \end{itemize}
+     \item[?] {Case T-If}
+      \begin{itemize}
+      \item[?] \textbf{t = if $t_1$ the $t_2$ else $t_3$\\
+                $\Gamma$ x : S $\vdash t_1$ : Bool \\
+                $\Gamma$ x : S $\vdash t_2$ : T \\
+                $\Gamma$ x : S $\vdash t_3$ : T}
+      \item {
+        By induction we have: \\
+        $\Gamma \vdash [x \rightarrow s] t_1$ : Bool \\
+        $\Gamma \vdash [x \rightarrow s] t_2$ : T \\
+        $\Gamma \vdash [x \rightarrow s] t_2$ : T \\
+      }
+     \end{itemize}
+
+  \end{itemize}
+  \normalsize
+\end{frame}
+
+\begin{frame}{9.3.9 - Theorem [Preservation]}
+  \begin{itemize}
+  \item {
+    If $\Gamma \vdash e : T$ and $e \rightarrow e'$, then $\Gamma e' : T$.
+  }
+  \end{itemize}
+\end{frame}
+
+\end{comment}

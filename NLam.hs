@@ -20,6 +20,8 @@ data NLam = NVar Int
           | NLet Int NLam NLam
           | NTuple (NLam, NLam) 
           | NProjTuple NLam Int
+          | NRecord [(Char, NLam)]
+          | NProjRecord NLam Char
           deriving (Show, Eq)
 
 --Contexto de nomes
@@ -71,7 +73,16 @@ removeNames g (TTuple (t1, t2)) = let t1' = removeNames g t1
 removeNames g (TProjTuple (TTuple (t1,t2)) index) = let t1' = removeNames g t1
                                                         t2' = removeNames g t2
                                                     in NProjTuple (NTuple (t1', t2')) index
-
+removeNames g (TRecord (h:t)) = let t1 = removeNames g (snd h)
+                                in if length t > 0 then
+                                     let NRecord t2 = removeNames g (TRecord t)
+                                     in NRecord ([(fst h, t1)] ++ t2)
+                                   else
+                                     NRecord [(fst h, t1)] 
+removeNames g (TProjRecord (TRecord l) label) = let t1 = removeNames g (TRecord l)
+                                                in NProjRecord t1 label
+removeNames g (TProjRecord t label) = let t1 = removeNames g t
+                                      in NProjRecord t1 label                                                
 
 
 --Função restoreNames (troca os números por nomes)
@@ -102,6 +113,20 @@ restoreNames g (NLet c t1 t2) = let letra = varDisp g letras
                                     t1' = restoreNames ctx t1 
                                     t2' = restoreNames ctx t2
                                 in TLet letra t1' t2'   
+restoreNames g (NTuple (t1, t2)) = let t1' = restoreNames g t1
+                                       t2' = restoreNames g t2
+                                   in TTuple (t1', t2')
+restoreNames g (NProjTuple (NTuple (t1,t2)) index) = let t1' = restoreNames g t1
+                                                         t2' = restoreNames g t2
+                                                     in TProjTuple (TTuple (t1', t2')) index
+restoreNames g (NRecord (h:t)) = let t1 = restoreNames g (snd h)
+                                 in if length t > 0 then
+                                      let TRecord t2 = restoreNames g (NRecord t)
+                                      in TRecord ([(fst h, t1)] ++ t2)
+                                    else
+                                      TRecord [(fst h, t1)] 
+restoreNames g (NProjRecord (NRecord l) label) = let t1 = restoreNames g (NRecord l)
+                                                 in TProjRecord t1 label                                                                                     
                                 
 --Função shifting
 shifting :: (Int, Int) -> NLam -> NLam
@@ -119,7 +144,7 @@ shifting (d, c) t = t
 --         j     s       k
 --j = Índice a ser substituído
 --s = Termo que substitui o índice (j)
---k = Termo onde será aplicada a substituição
+--k = Termo onde será aplicada a substituição   subsNL (0, (shifting (1, 0) v2)) (t)
 subsNL :: (Int, NLam) -> NLam -> NLam
 subsNL (j, s) (NVar k) =
    if k == j then
@@ -139,6 +164,18 @@ isValNL (NVar k) = True
 isValNL (NAbs t) = True
 isValNL NTrue  = True
 isValNL NFalse = True
+isValNL NUnit = True
+isValNL (NTuple (t1,t2)) = if isValNL t1 then
+                             isValNL t2
+                           else
+                             False
+isValNL (NRecord (h:t)) = if isValNL (snd h) then
+                            if length t > 0 then
+                              isValNL (NRecord t)
+                            else
+                              True  
+                          else
+                            False                               
 isValNL t = isNumber t 
 
 --Função que verificar se um NLam é um tipo True ou False
@@ -147,12 +184,24 @@ isValNL t = isNumber t
 --isBool NFalse = True
 --isBool t12 = False
 
---Função para se valor é um número
+--Função para saber se valor é um número
 isNumber :: NLam -> Bool
 isNumber NZero = True
 isNumber (NSucc NZero) = True
 isNumber (NSucc t) = isNumber t
 isNumber _ = False
+
+--Função que retorna o NLam do índice da projeção da tupla
+findProjTupleByIndex :: NLam -> NLam 
+findProjTupleByIndex (NProjTuple (NTuple (t1,t2)) index) = if index == 1 then
+                                                             t1
+                                                           else 
+                                                             findProjTupleByIndex (NProjTuple t2 (index-1))
+findProjTupleByIndex (NProjTuple t index) = if index == 1 then
+                                              t
+                                            else
+                                              error "O índice da projeção não indica nenhum elemento da tupla!"  
+findProjTupleByIndex _ = error "O parâmetro não é uma projeção de NTuple"                
 
 --Função que chama a função de avaliação recursivamente
 interpretNLam :: NLam -> NLam
@@ -214,3 +263,35 @@ evalCBVNL (NLet n t1 t2) = if isValNL t1 then
                              subsNL (n, t1) t2
                            else
                              NLet n (evalCBVNL(t1)) t2
+
+evalCBVNL (NTuple (t1,t2)) = if isValNL t1 then
+                               NTuple(t1, evalCBVNL t2)
+                             else
+                               let t1' = evalCBVNL t1
+                               in NTuple(t1', t2)                             
+evalCBVNL (NProjTuple (NTuple (t1,t2)) index) = if isValNL (NTuple (t1,t2)) then
+                                                  findProjTupleByIndex (NProjTuple (NTuple (t1,t2)) index) --E-PROJTUPLE
+                                                else --E-PROJ e E-TUPLE
+                                                  let tupleEvaluated = evalCBVNL (NTuple (t1,t2))
+                                                  in (NProjTuple tupleEvaluated index)
+                                                  
+evalCBVNL (NRecord (h:t)) = if isValNL (snd h) then
+                               if length t > 0 then
+                               	let NRecord t1 = evalCBVNL (NRecord t)
+                               	in NRecord ([h] ++ t1)
+                               else
+                                 NRecord [h] 		
+                            else
+                               let t1 = evalCBVNL (snd h)
+                               in NRecord ((fst h, t1) : t)
+evalCBVNL (NProjRecord (NRecord (h:t)) label) = if isValNL (NRecord (h:t)) then
+                                                   if (fst h) == label then
+                                                     snd h
+                                                   else
+                                                     if length t > 0 then  	
+                                                       evalCBVNL (NProjRecord (NRecord t) label)
+                                                     else
+                                                       error "O label da projecao nao existe nos elementos do TRecord"  
+                                                else
+                                                   NProjRecord (evalCBVNL (NRecord (h:t))) label
+                                                   

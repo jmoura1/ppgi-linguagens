@@ -50,7 +50,10 @@ TLamReg : var                                                       { Var $1 }
         | '(' lam var ':' TLamRegType '.' TLamReg ')'               { Abs $3 $5 $7 }
         
         | lam var ':' '{' TLamRegTypeTuple '}' '.' TLamReg          { Abs $2 (list2typeTuple $5) $8 }    
-        | '(' lam var ':' '{' TLamRegTypeTuple '}' '.' TLamReg ')'  { Abs $3 (list2typeTuple $6) $9 }         
+        | '(' lam var ':' '{' TLamRegTypeTuple '}' '.' TLamReg ')'  { Abs $3 (list2typeTuple $6) $9 } 
+        
+        | lam var ':' '{' TLamRegTypeRecord '}' '.' TLamReg         { Abs $2 (TypeRecord $5) $8 }    
+        | '(' lam var ':' '{' TLamRegTypeRecord '}' '.' TLamReg ')' { Abs $3 (TypeRecord $6) $9 }         
         
         | TLamReg TLamReg                                           { App $1 $2 } 
         | '(' TLamReg TLamReg ')'                                   { App $2 $3 } 
@@ -90,6 +93,15 @@ TLamReg : var                                                       { Var $1 }
         
         | '{' TLamRegTuple '}' '.' int                              { TProjTuple (list2tuple $2) $5 } 
         | '(' '{' TLamRegTuple '}' '.' int ')'                      { TProjTuple (list2tuple $3) $6 } 
+        
+        | '{' TLamRegRecord '}'                                     { TRecord $2 } 
+        | '(' '{' TLamRegRecord '}' ')'                             { TRecord $3 }
+        
+        | '{' TLamRegRecord '}' '.' var                             { TProjRecord (TRecord $2) $5 } 
+        | '(' '{' TLamRegRecord '}' '.' var ')'                     { TProjRecord (TRecord $3) $6 }
+        
+        | var '.' var                                               { TProjRecord (Var $1) $3 }
+        | '(' var '.' var ')'                                       { TProjRecord (Var $2) $4 }
 
 
 TLamRegType : Bool   { TypeBool }
@@ -100,7 +112,13 @@ TLamRegTuple : TLamReg                   { [$1] }
              | TLamReg ',' TLamRegTuple  { $1 : $3 }
              
 TLamRegTypeTuple : TLamRegType                       { [$1] }
-                 | TLamRegType ',' TLamRegTypeTuple  { $1 : $3 }                  
+                 | TLamRegType ',' TLamRegTypeTuple  { $1 : $3 } 
+                 
+TLamRegRecord : var '=' TLamReg                    { [($1, $3)] }
+              | var '=' TLamReg ',' TLamRegRecord  { ($1, $3) : $5 }
+              
+TLamRegTypeRecord : var ':' TLamRegType                         { [($1, $3)] }
+                  | var ':' TLamRegType ',' TLamRegTypeRecord   { ($1, $3) : $5 }                                                 
 
 {
 
@@ -197,8 +215,8 @@ list2typeTuple (c:cs) = if length cs < 1 then
                            error "A tupla deve ter no mínimo dois elementos com Tipos!"
                         else if length cs == 1 then
                      	   TypeTuple (c, (head cs))
-                     else   
-								TypeTuple (c, (list2typeTuple cs))								  
+                        else   
+								   TypeTuple (c, (list2typeTuple cs))								  
 
 main = getContents >>= print . calc . lexer
 
