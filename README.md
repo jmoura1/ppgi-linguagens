@@ -1,17 +1,19 @@
 # ppgi-prog-lang
 
-#### O há por aqui?
-Esse repositório armazena códigos desenvolvidos na disciplina [**Linguagens de Programação (ELC921)**](http://www-usr.inf.ufsm.br/~juvizzotto/prog-lang/), ministrada pela Professora [**Juliana Kaizer Vizzotto**](http://www-usr.inf.ufsm.br/~juvizzotto/) no [**Programa de Pós-graduação em Informática**](http://w3.ufsm.br/ppgi/) da [**Universidade Federal de Santa Maria**](http://www.ufsm.br) no primeiro semestre de 2015.
+#### O que há por aqui?
+Esse repositório contém os códigos desenvolvidos na disciplina [**Linguagens de Programação (ELC921)**](http://www-usr.inf.ufsm.br/~juvizzotto/prog-lang/), ministrada pela Professora [**Juliana Kaizer Vizzotto**](http://www-usr.inf.ufsm.br/~juvizzotto/) no [**Programa de Pós-graduação em Informática**](http://w3.ufsm.br/ppgi/) da [**Universidade Federal de Santa Maria**](http://www.ufsm.br) no primeiro semestre de 2015 (2015/1).
 
 Recomentações gerais:
-- Veja o livro [Types and Programming Languages](https://www.cis.upenn.edu/~bcpierce/tapl/)
+- Veja o livro [*Types and Programming Languages*](https://www.cis.upenn.edu/~bcpierce/tapl/)
+- Como material complementar, veja [*Essentials of Programming Languages*](https://mitpress.mit.edu/books/essentials-programming-languages)
+- Revise seus conhecimentos de Haskell em [*Learn you a Haskell for Great Good!*](http://learnyouahaskell.com/chapters)
 
 #### Linguagens de programação utilizadas
 - Haskell @ [GHC](https://www.haskell.org/ghc/)
 
-#### Funcionalidades de implementação:
+#### Funcionalidades da implementação:
 - Cálculo lambda sem tipagem
-   - Implementação de um parser através de [Happy](https://www.haskell.org/happy/)
+   - Implementação de um parser através de [*Happy*](https://www.haskell.org/happy/)
    - Proteção contra captura de variáveis através de Distância estática / [Índices de Bruijn](http://en.wikipedia.org/wiki/De_Bruijn_index)
 
 #### Alunos envolvidos:
@@ -24,6 +26,7 @@ Recomentações gerais:
 
 
 #### Changelog
+- Atualizações subsequentes: Veja a lista de commits.
 - 05/05/2015:
    - Adiciona suporte a *brackets* em algumas expressões do parser
    - Atualiza isValNL para considearar booleans e [*Church Numerals*](https://en.wikipedia.org/wiki/Church_encoding#Church_numerals)
