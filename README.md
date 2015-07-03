@@ -1,4 +1,4 @@
-!(Haskell Logo)[http://www.unixstickers.com/image/cache/data/stickers/haskell/Haskell.sh-600x600.png]
+![Haskell Logo](http://www.unixstickers.com/image/cache/data/stickers/haskell/Haskell.sh-600x600.png)
 
 # ppgi-prog-lang
 
