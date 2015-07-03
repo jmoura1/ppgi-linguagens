@@ -17,10 +17,12 @@ Recomentações gerais:
 - Cálculo lambda sem tipagem
    - Implementação de um parser através de [*Happy*](https://www.haskell.org/happy/)
    - Proteção contra captura de variáveis através de Distância estática / [Índices de Bruijn](http://en.wikipedia.org/wiki/De_Bruijn_index)
-- *Type Checker* para *Simple Types* do Cálculo Lambda (commit 532cc87)
-- Apresentação do Trabalho 4 (commit 373ba14): Expressões Aritméticas Tipadas e Cálculo Lambda Simplesmente Tipado
-- Adição dos novos tipos Nat, Unit, Let e Seq (commit 095de53)
-   - Melhoramento do TypeChecker para suportar os novos tipos (commit f1bccd5)
+- *Type Checker* para *Simple Types* do Cálculo Lambda (*commit* 532cc87)
+- Apresentação do Trabalho 4 (*commit* 373ba14): Expressões Aritméticas Tipadas e Cálculo Lambda Simplesmente Tipado
+- Adição dos novos tipos Nat, Unit, Let e Seq (*commit* 095de53)
+   - Melhoramento do *TypeChecker* para suportar os novos tipos (*commit* f1bccd5)
+- Adição do tipo *Tuples* (*commits* ebb23b0, b00967f, 1e31363 e 6f6a4b5)
+- Adição do tipo Registro (*commits* 1e35bc3 e 3a5a010)
 
 
 #### Alunos envolvidos:
