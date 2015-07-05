@@ -1,71 +1,88 @@
 %inicio jessica
 \begin{frame}
-\frametitle{SLIDES JÉSSICA} %Tipos de Funções}
-%\begin{itemize}
-%\item Para construir um tipo que combine booleanos com primitivas do cálculo lambda é preciso
-%adicionar uma classificação para os termos cuja avaliação resulta em uma função;
-%\item A fim de ter certeza de que a função irá se comportar corretamente quando for chamada, precisamos manter o controle de qual o tipo de argumento que ela espera.
-%\end{itemize}
-\end{frame}
-
-\begin{comment}
-\begin{frame}
-\frametitle{Tipos de Funcoes}
+\frametitle{15.2 A relação de subtipos} 
 \begin{itemize}
-\item Para manter esta informação, podemos utilizar um novo tipo:
+\item Coleção de regras de inferência para derivar declarações
 \end{itemize}
-\begin{eqnarray*}
-    & T ::= \\
-    && Bool \\
-    && T \to T\\
-\end{eqnarray*}
+ \begin{block}{}
+      \begin{align*}
+ & \texttt{\frenchspacing S <: S} & & (\textsc{S-Refl})\\
+	 &\\
+        %  & \mbox{\infer{\texttt{\frenchspacing S <: T}}{\texttt{\frenchspacing S <: U}} & &  \texttt{\frenchspacing U <: T}} & & \textsc{(S-Trans)}
+         & \mbox{\infer{\texttt{\frenchspacing S <: T}}{\texttt{\frenchspacing S <: U} & &  \texttt{\frenchspacing U <: T}}} & & \textsc{(S-Trans)}
+&\\
+&\\
+& \texttt{\frenchspacing {$\{ \rceil_i : T_i\ ^{i \in 1..n+k} \} <: \{ \rceil_i : T_i\ ^{i \in 1..n} \} $}} & & (\textsc{S-RcdWidth})\\
+      \end{align*}
+   \end{block}
 \end{frame}
 
 \begin{frame}
-\frametitle{Tipos de Funções}
+\frametitle{15.2 A relação de subtipos} 
 \begin{itemize}
-\item Exemplo:
+\item Exemplos:
+\begin{itemize}
+\item $ \{x:Nat\} $
+\begin{itemize}
+\item $\{x=3\},\ \{x=5\},\ e\ \{x=3,a=true,b=true\}$
 \end{itemize}
-\begin{eqnarray*}
-    & Bool \to Bool \\
-    & (Bool \to Bool) \to (Bool \to Bool) \\
-\end{eqnarray*}
-\end{frame}
-
-\begin{frame}
-\frametitle{Relação  de Tipos}
+\item $\{x:Nat,y:Nat\}$
 \begin{itemize}
-\item Para saber o tipo de uma abstração como \textcolor{red}{$"\lambda x.t"$}, precisamos calcular o que acontece quando essa abstração é aplicada a algum argumento;
-\item Abordagem utilizada agora: anotar a abstração com o tipo esperado para seus argumentos.
-\item Exemplo: \textcolor{red}{$"\lambda x.t"$} será \textcolor{red}{$"\lambda x:T1 .t2"$}
+\item $\{x=3,y=100\}\ e\ \{x=3,y=100,z=true\}$ 
+\end{itemize}
+\end{itemize}
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Relação  de Tipos}
+\frametitle{15.2 A relação de subtipos} 
 \begin{itemize}
-\item Termos podem conter abstrações aninhadas. Com isso em mente, utilizaremos $\Gamma \vdash t : T$ onde $\Gamma$ é um conjunto com as variáveis livres de t e seus respectivos tipos. Sendo assim, a regra de tipo para abstrações será:
+\item É seguro permitir que os tipos dos campos variem desde que os tipos correspondentes nos dois registros estejam na relação de subtipos;
 \end{itemize}
- \begin{center}
-{\huge $\frac{\Gamma ,x\ :\ T_1 \vdash t_2\  :\  T_2}{\Gamma\  \vdash\  \lambda x\  :\ T_1 .t_2\  :\  T_1 \to T_2}$}  $\qquad (T-Abs)$
- \end{center}
+ \begin{block}{}
+      \begin{align*}
+        %  & \mbox{\infer{\texttt{\frenchspacing S <: T}}{\texttt{\frenchspacing S <: U}} & &  \texttt{\frenchspacing U <: T}} & & \textsc{(S-Trans)}
+         & \mbox{\infer{\texttt{\frenchspacing $\{ \rceil_i : S_i\ ^{i \in 1..n} \} <: \{ \rceil_i : T_i\ ^{i \in 1..n} \} $}}{\texttt{\frenchspacing for each $i\quad S_i <:T_i$}}} & & \textsc{(S-RcdDepth)}
+      \end{align*}
+   \end{block}
 \end{frame}
 
 \begin{frame}
-\frametitle{Relação  de Tipos}
+\frametitle{15.2 A relação de subtipos} 
 \begin{itemize}
-\item A regra para variável é:
+\item A ordem dos campos no registro não faz diferença em como podemos usá-los;
 \end{itemize}
- \begin{center}
-{\huge $\frac{x:T\ \in\ \Gamma}{\Gamma\ \vdash\ x\ :\ T}$}  $\qquad (T-Var)$
- \end{center}
- \begin{itemize}
-\item A regra para aplicação é:
-\end{itemize}
- \begin{center}
-{\huge $\frac{\Gamma\  \vdash\ t_1\ :\ T_{11} \to T_{12} \quad \Gamma\ \vdash\ t_2 : T_{11}}{\Gamma\  \vdash\ t_1\ t_2\ :\ T_{12}}$}  $\qquad (T-App)$
- \end{center}
+ \begin{block}{}
+      \begin{align*}
+        %  & \mbox{\infer{\texttt{\frenchspacing S <: T}}{\texttt{\frenchspacing S <: U}} & &  \texttt{\frenchspacing U <: T}} & & \textsc{(S-Trans)}
+         & \mbox{\infer{\texttt{\frenchspacing $\{ k_j : S_j\ ^{j \in 1..n} \} <: \{ _i : T_i\ ^{i \in 1..n} \} $}}{\texttt{\frenchspacing $\{ k_j : S_j\ ^{j \in 1..n} \}$ is a permutation of $ \{ \rceil_i : T_i\ ^{i \in 1..n} \} $}}} & & \textsc{(S-RcdPerm)}
+      \end{align*}
+   \end{block}
 \end{frame}
-%fim jessica
 
-\end{comment}
+
+\begin{frame}
+\frametitle{15.2 A relação de subtipos} 
+\begin{itemize}
+\item Como estamos trabalhando com uma linguagem que não terá apenas números e registros, mas também funções funções podem ser utilizadas como argumentos, precisamos especificar sobre quais circunstâncias é seguro usar uma função de um determinado tipo em um contexto onde é esperada uma função de um tipo diferente;
+\end{itemize}
+ \begin{block}{}
+      \begin{align*}
+       & \mbox{\infer{\texttt{\frenchspacing $ S_1\ \to\ S_2 <: T_1\ \to\ T_2 $ }}{\texttt{\frenchspacing$ T_1 <: S_1 \qquad S_2 <: T_2 $}}} & & \textsc{(S-Arrow)}
+      \end{align*}
+   \end{block}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{15.2 A relação de subtipos} 
+\begin{itemize}
+\item É conveniente ter um tipo que seja um "supertipo" de cada tipo, para isso introduzimos a nova constante de tipo "Top";
+\end{itemize}
+ \begin{block}{}
+      \begin{align*}
+  & \texttt{\frenchspacing S <: Top} & & (\textsc{S-Top})\\
+      \end{align*}
+   \end{block}
+\end{frame}
+
