@@ -79,13 +79,13 @@
    \begin{align*}
       & \textttf{\huge\obrack} \mbox{
          \infer [\rulename{\scriptsize(S-Refl)}] {\textttf{T\subtype T}} {}
-      } \textttf{\huge\cbrack} & & = & \lambda \textttf{x:\obrack T\cbrack .x}
+      } \textttf{\huge\cbrack} & & =  \lambda \textttf{x:\obrack T\cbrack .x}
       \\
       & \textttf{\Huge\obrack} \mbox{\scriptsize
          \infer [\rulename{\scriptsize(S-Trans)}] {\textttf{S\subtype T}} {
             \textttf{$\mathcal{C}_1\ \mathrm{::}\ $S\subtype U} & \quad \textttf{$\mathcal{C}_2\ \mathrm{::}\ $U\subtype T} &
          }
-      } \textttf{\Huge\cbrack} & & = & \lambda \textttf{x:\obrack S\cbrack .\obrack $\mathcal{C}_2$\cbrack(\obrack $\mathcal{C}_1$\cbrack\ x)}
+      } \textttf{\Huge\cbrack} & & =  \lambda \textttf{x:\obrack S\cbrack .\obrack $\mathcal{C}_2$\cbrack(\obrack $\mathcal{C}_1$\cbrack\ x)}
    \end{align*}
  \end{frame}
 
