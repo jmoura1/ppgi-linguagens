@@ -1,18 +1,28 @@
 \documentclass[table, usenames, svgnames, dvipsnames]{beamer}
 \usepackage{listings}
 \usepackage{beamerthemeshadow}
+
+% Esses três andam sempre juntos para não arruinar as fontes da apresentação!
 \usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
 \usepackage[absolute,overlay]{textpos}
 \usepackage{array}
 
-% Coisas adicionadas pelo Alberto.
 \usepackage{proof}
 \usepackage{easylist}
 % \usepackage[portuguese]{babel}
 \usepackage{amsmath}
 \usepackage[round]{natbib}
 
+% \usepackage{textcomp} % DEPRECATED Use o stmaryrd no lugar dele
+\usepackage{stmaryrd}
+
+
 \usepackage{verbatim}
+
+
 
 \usetheme{Rochester}
 %\usetheme{Luebeck}
@@ -36,6 +46,15 @@
    \includegraphics[width=0.7cm]{figuras/ime-mod2.png}
 \end{textblock}
 }
+
+\newcommand{\subtype}{\ \texttt{<:}\ }
+
+\newcommand{\rulename}[1]{\normalfont \textsc{#1}}
+
+\newcommand{\textttf}[1]{\texttt{\frenchspacing #1}}
+
+\newcommand{\obrack}{$\llbracket$}
+\newcommand{\cbrack}{$\rrbracket$}
 
 \title{\footnotesize Subtipos e Metateoria dos Subtipos}
 
